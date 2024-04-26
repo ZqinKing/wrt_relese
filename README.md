@@ -1,1 +1,1 @@
-# mt798-wrt_relese
+# mt798x-wrt_relese
