@@ -36,7 +36,7 @@ cd $BASE_PATH/$BUILD_DIR
 make defconfig
 
 if [[ $Build_Mod == "debug" ]]; then
-	exit 0
+    exit 0
 fi
 
 make download -j$(nproc)

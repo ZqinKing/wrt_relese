@@ -17,7 +17,7 @@ THEME_SET="argon"
 
 clone_repo() {
     if [[ ! -d $BUILD_DIR ]]; then
-    echo $REPO_URL $REPO_BRANCH
+        echo $REPO_URL $REPO_BRANCH
         git clone --depth 1 -b $REPO_BRANCH $REPO_URL $BUILD_DIR
     fi
 }
@@ -77,7 +77,7 @@ remove_unwanted_packages() {
     for pkg in "${small8_packages[@]}"; do
         \rm -rf ./feeds/small8/$pkg
     done
-    
+
     if [[ -d ./package/istore ]]; then
         \rm -rf ./package/istore
     fi
@@ -96,12 +96,12 @@ install_feeds() {
     ./scripts/feeds install -f -ap luci
     ./scripts/feeds install -f -ap routing
     ./scripts/feeds install -f -ap telephony
-	if [[ -d ./feeds/nss_packages ]]; then
-		./scripts/feeds install -f -ap nss_packages
-	fi
-	if [[ -d ./feeds/sqm_scripts_nss ]]; then
-		./scripts/feeds install -f -ap sqm_scripts_nss
-	fi 
+    if [[ -d ./feeds/nss_packages ]]; then
+        ./scripts/feeds install -f -ap nss_packages
+    fi
+    if [[ -d ./feeds/sqm_scripts_nss ]]; then
+        ./scripts/feeds install -f -ap sqm_scripts_nss
+    fi 
     ./scripts/feeds install -p small8 -f xray-core xray-plugin dns2tcp dns2socks haproxy hysteria naiveproxy \
         shadowsocks-rust sing-box v2ray-core v2ray-geodata v2ray-plugin tuic-client chinadns-ng ipt2socks tcping \
         trojan-plus simple-obfs shadowsocksr-libev luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns \
@@ -114,24 +114,24 @@ fix_default_set() {
     #修改默认主题
     sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
     #sed -i "s/\.ssid=.*/\.ssid=$SSID_NAME/g" $(find ./package/kernel/mac80211/ -type f -name "mac80211.sh")
-	
-	if [[ -f ./package/emortal/autocore/files/tempinfo ]]; then
-		if [[ -f $BASE_PATH/patches/tempinfo ]]; then
-			\cp -f $BASE_PATH/patches/tempinfo ./package/emortal/autocore/files/tempinfo
-		fi
-	fi
+
+    if [[ -f ./package/emortal/autocore/files/tempinfo ]]; then
+        if [[ -f $BASE_PATH/patches/tempinfo ]]; then
+            \cp -f $BASE_PATH/patches/tempinfo ./package/emortal/autocore/files/tempinfo
+        fi
+    fi
 }
 
 fix_miniupmpd() {
-	local PKG_HASH=$(awk -F"=" '/^PKG_HASH:/ {print $2}' ./feeds/packages/net/miniupnpd/Makefile)
-	if [[ $PKG_HASH == "fbdd5501039730f04a8420ea2f8f54b7df63f9f04cde2dc67fa7371e80477bbe" ]]; then
-		if [[ -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ]]; then
-			if [[ ! -d ./feeds/packages/net/miniupnpd/patches ]]; then
-				mkdir -p ./feeds/packages/net/miniupnpd/patches
-			fi
-			\cp -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ./feeds/packages/net/miniupnpd/patches/
-		fi
-	fi
+    local PKG_HASH=$(awk -F"=" '/^PKG_HASH:/ {print $2}' ./feeds/packages/net/miniupnpd/Makefile)
+    if [[ $PKG_HASH == "fbdd5501039730f04a8420ea2f8f54b7df63f9f04cde2dc67fa7371e80477bbe" ]]; then
+        if [[ -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ]]; then
+            if [[ ! -d ./feeds/packages/net/miniupnpd/patches ]]; then
+                mkdir -p ./feeds/packages/net/miniupnpd/patches
+            fi
+            \cp -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ./feeds/packages/net/miniupnpd/patches/
+        fi
+    fi
 }
 
 main() {
@@ -142,7 +142,7 @@ main() {
     update_feeds
     remove_unwanted_packages
     fix_default_set
-	fix_miniupmpd
+    fix_miniupmpd
     update_golang
     install_feeds
 }
