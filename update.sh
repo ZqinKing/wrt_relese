@@ -1,49 +1,150 @@
 #!/usr/bin/env bash
 
+set -e
+
 source /etc/profile
 BASE_PATH=$(cd $(dirname $0) && pwd)
 
-if [[ ! -d $BASE_PATH/immortalwrt-mt798x ]]; then
-	git clone https://github.com/padavanonly/immortalwrt-mt798x.git
-fi
+REPO_URL=$1
+REPO_BRANCH=$2
+BUILD_DIR=$3
 
-cd $BASE_PATH/immortalwrt-mt798x
-if [[ -f $BASE_PATH/immortalwrt-mt798x/.config ]]; then
-	\rm -f $BASE_PATH/immortalwrt-mt798x/.config
-fi
+FEEDS_CONF="feeds.conf.default"
+GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
+GOLANG_BRANCH="23.x"
+THEME_SET="argon"
+#SSID_NAME="Newifi2_D1"
 
-status_cfg=$(git status | grep -cE "feeds.conf.default$")
-if [[ $status_cfg -eq 1 ]]; then
-    git reset HEAD feeds.conf.default
-    git checkout feeds.conf.default
-fi
+clone_repo() {
+    if [[ ! -d $BUILD_DIR ]]; then
+    echo $REPO_URL $REPO_BRANCH
+        git clone --depth 1 -b $REPO_BRANCH $REPO_URL $BUILD_DIR
+    fi
+}
 
-\rm -rf ./tmp
-\rm -rf ./logs/*
+clean_up() {
+    cd $BUILD_DIR
+    if [[ -f $BUILD_DIR/.config ]]; then
+        \rm -f $BUILD_DIR/.config
+    fi
+    if [[ -d $BUILD_DIR/tmp ]]; then
+        \rm -rf $BUILD_DIR/tmp
+    fi
+    if [[ -d $BUILD_DIR/logs ]]; then
+        \rm -rf $BUILD_DIR/logs/*
+    fi
+}
 
-git pull
+reset_feeds_conf() {
+    if git status | grep -qE "$FEEDS_CONF$"; then
+        git reset HEAD $FEEDS_CONF
+        git checkout $FEEDS_CONF
+    fi
+}
 
-echo "src-git small8 https://github.com/kenzok8/small-package" >> feeds.conf.default
+update_feeds() {
+    echo "src-git small8 https://github.com/kenzok8/small-package" >> $BUILD_DIR/$FEEDS_CONF
+    # sed -i 's#https://#git://#g' $BUILD_DIR/$FEEDS_CONF
+    ./scripts/feeds clean
+    ./scripts/feeds update -a
+}
 
-./scripts/feeds clean
-./scripts/feeds update -a
+remove_unwanted_packages() {
+    local luci_packages=(
+        "luci-app-passwall" "luci-app-smartdns" "luci-app-ddns-go" "luci-app-rclone"
+        "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
+    )
+    local packages_net=(
+        "haproxy" "xray-core" "xray-plugin" "dns2tcp" "dns2socks" "alist" "hysteria"
+        "smartdns" "mosdns" "adguardhome" "ddns-go" "naiveproxy" "shadowsocks-rust"
+        "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
+        "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
+        "shadowsocksr-libev" "dae" "daed"
+    )
+    local small8_packages=(
+        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
+    )
 
-\rm -rf ./feeds/luci/applications/{luci-app-passwall,luci-app-smartdns,luci-app-ddns-go,luci-app-rclone,luci-app-ssr-plus,luci-app-vssr}
-\rm -rf ./feeds/luci/themes/luci-theme-argon
-\rm -rf ./feeds/packages/net/{haproxy,xray-core,xray-plugin,mosdns,smartdns,ddns-go,dns2tcp,dns2socks}
-\rm -rf ./feeds/small8/{ppp,firewall,dae,daed,daed-next,libnftnl,nftables,dnsmasq}
+    for pkg in "${luci_packages[@]}"; do
+        \rm -rf ./feeds/luci/applications/$pkg
+        \rm -rf ./feeds/luci/themes/$pkg
+    done
 
-if [[ -d ./feeds/packages/lang/golang ]]; then
-	\rm -rf ./feeds/packages/lang/golang
-	git clone https://github.com/sbwml/packages_lang_golang -b 22.x ./feeds/packages/lang/golang
-fi
+    for pkg in "${packages_net[@]}"; do
+        \rm -rf ./feeds/packages/net/$pkg
+    done
 
-./scripts/feeds update -i
-./scripts/feeds install -f -ap packages
-./scripts/feeds install -f -ap luci
-./scripts/feeds install -f -ap routing
-./scripts/feeds install -f -ap telephony
+    for pkg in "${small8_packages[@]}"; do
+        \rm -rf ./feeds/small8/$pkg
+    done
+    
+    if [[ -d ./package/istore ]]; then
+        \rm -rf ./package/istore
+    fi
+}
 
-./scripts/feeds install -p small8 -f luci-app-adguardhome xray-core xray-plugin dns2tcp dns2socks haproxy \
-luci-app-passwall luci-app-mosdns luci-app-smartdns luci-app-ddns-go luci-app-cloudflarespeedtest taskd \
-luci-lib-xterm luci-lib-taskd luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-theme-argon
+update_golang() {
+    if [[ -d ./feeds/packages/lang/golang ]]; then
+        \rm -rf ./feeds/packages/lang/golang
+        git clone $GOLANG_REPO -b $GOLANG_BRANCH ./feeds/packages/lang/golang
+    fi
+}
+
+install_feeds() {
+    ./scripts/feeds update -i
+    ./scripts/feeds install -f -ap packages
+    ./scripts/feeds install -f -ap luci
+    ./scripts/feeds install -f -ap routing
+    ./scripts/feeds install -f -ap telephony
+	if [[ -d ./feeds/nss_packages ]]; then
+		./scripts/feeds install -f -ap nss_packages
+	fi
+	if [[ -d ./feeds/sqm_scripts_nss ]]; then
+		./scripts/feeds install -f -ap sqm_scripts_nss
+	fi 
+    ./scripts/feeds install -p small8 -f xray-core xray-plugin dns2tcp dns2socks haproxy hysteria naiveproxy \
+        shadowsocks-rust sing-box v2ray-core v2ray-geodata v2ray-plugin tuic-client chinadns-ng ipt2socks tcping \
+        trojan-plus simple-obfs shadowsocksr-libev luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns \
+        v2dat mosdns luci-app-mosdns adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm \
+        luci-lib-taskd luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
+        luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky
+}
+
+fix_default_set() {
+    #修改默认主题
+    sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
+    #sed -i "s/\.ssid=.*/\.ssid=$SSID_NAME/g" $(find ./package/kernel/mac80211/ -type f -name "mac80211.sh")
+	
+	if [[ -f ./package/emortal/autocore/files/tempinfo ]]; then
+		if [[ -f $BASE_PATH/patches/tempinfo ]]; then
+			\cp -f $BASE_PATH/patches/tempinfo ./package/emortal/autocore/files/tempinfo
+		fi
+	fi
+}
+
+fix_miniupmpd() {
+	local PKG_HASH=$(awk -F"=" '/^PKG_HASH:/ {print $2}' ./feeds/packages/net/miniupnpd/Makefile)
+	if [[ $PKG_HASH == "fbdd5501039730f04a8420ea2f8f54b7df63f9f04cde2dc67fa7371e80477bbe" ]]; then
+		if [[ -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ]]; then
+			if [[ ! -d ./feeds/packages/net/miniupnpd/patches ]]; then
+				mkdir -p ./feeds/packages/net/miniupnpd/patches
+			fi
+			\cp -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ./feeds/packages/net/miniupnpd/patches/
+		fi
+	fi
+}
+
+main() {
+    clone_repo
+    clean_up
+    reset_feeds_conf
+    git pull
+    update_feeds
+    remove_unwanted_packages
+    fix_default_set
+	fix_miniupmpd
+    update_golang
+    install_feeds
+}
+
+main "$@"

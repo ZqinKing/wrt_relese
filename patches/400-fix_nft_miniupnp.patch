@@ -1,0 +1,80 @@
+diff --git a/getifaddr.c b/getifaddr.c
+index 76a582c..f8f93d8 100644
+--- a/getifaddr.c
++++ b/getifaddr.c
+@@ -313,13 +313,13 @@ static const struct { uint32_t address; uint32_t rmask; } reserved[] = {
+ int
+ addr_is_reserved(struct in_addr * addr)
+ {
+-	uint32_t address = ntohl(addr->s_addr);
++	/*uint32_t address = ntohl(addr->s_addr);
+ 	size_t i;
+ 
+ 	for (i = 0; i < sizeof(reserved)/sizeof(reserved[0]); ++i) {
+ 		if ((address >> reserved[i].rmask) == (reserved[i].address >> reserved[i].rmask))
+ 			return 1;
+-	}
++	}*/
+ 
+ 	return 0;
+ }
+diff --git a/miniupnpd.c b/miniupnpd.c
+index 2cb283f..f64e605 100644
+--- a/miniupnpd.c
++++ b/miniupnpd.c
+@@ -962,7 +962,7 @@ parselanaddr(struct lan_addr_s * lan_addr, const char * str, int debug_flag)
+ 		if(!inet_aton(lan_addr->str, &lan_addr->addr))
+ 			goto parselan_error;
+ 	}
+-	if(!addr_is_reserved(&lan_addr->addr)) {
++	if(0) {
+ 		INIT_PRINT_ERR("Error: LAN address contains public IP address : %s\n", lan_addr->str);
+ 		INIT_PRINT_ERR("Public IP address can be configured via ext_ip= option\n");
+ 		INIT_PRINT_ERR("LAN address should contain private address, e.g. from 192.168. block\n");
+diff --git a/upnpredirect.c b/upnpredirect.c
+index e9d1c82..6bebc11 100644
+--- a/upnpredirect.c
++++ b/upnpredirect.c
+@@ -444,7 +444,7 @@ upnp_redirect_internal(const char * rhost, unsigned short eport,
+ {
+ 	/*syslog(LOG_INFO, "redirecting port %hu to %s:%hu protocol %s for: %s",
+ 		eport, iaddr, iport, protocol, desc);			*/
+-	if(disable_port_forwarding)
++	if(0)
+ 		return -1;
+ 	if(add_redirect_rule2(ext_if_name, rhost, eport, iaddr, iport, proto,
+ 	                      desc, timestamp) < 0) {
+diff --git a/netfilter_nft/nftnlrdr_misc.c b/netfilter_nft/nftnlrdr_misc.c
+index a4de26e..ddc4137 100644
+--- a/netfilter_nft/nftnlrdr_misc.c
++++ b/netfilter_nft/nftnlrdr_misc.c
+@@ -1,4 +1,4 @@
+-/* $Id: nftnlrdr_misc.c,v 1.20 2024/03/19 23:35:54 nanard Exp $ */
++/* $Id: nftnlrdr_misc.c,v 1.19 2024/03/11 23:28:21 nanard Exp $ */
+ /* vim: tabstop=4 shiftwidth=4 noexpandtab
+  * MiniUPnP project
+  * http://miniupnp.free.fr/ or https://miniupnp.tuxfamily.org/
+@@ -283,6 +283,9 @@ parse_rule_nat(struct nftnl_expr *e, rule_t *r)
+ 	r->family = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_FAMILY);
+ 	addr_min_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_ADDR_MIN);
+ 	addr_max_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_ADDR_MAX);
++	/* see expr_add_nat() :
++	 * NFTNL_EXPR_NAT_REG_PROTO_MIN/NFTNL_EXPR_NAT_REG_PROTO_MAX is used
++	 * for destination port */
+ 	proto_min_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_PROTO_MIN);
+ 	proto_max_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_PROTO_MAX);
+ 
+@@ -300,10 +303,10 @@ parse_rule_nat(struct nftnl_expr *e, rule_t *r)
+ 	}
+ 	reg_val_ptr = get_reg_val_ptr(r, addr_min_reg);
+ 	if (reg_val_ptr != NULL) {
++		/* destination address */
+ 		r->nat_addr = (in_addr_t)*reg_val_ptr;
+-		if (proto_min_reg == NFT_REG_1) {
+-			r->nat_port = proto_min_val;
+-		}
++		/* destination port */
++		r->nat_port = proto_min_val;
+ 	} else {
+ 		syslog(LOG_ERR, "%s: invalid addr_min_reg %u", "parse_rule_nat", addr_min_reg);
+ 	}

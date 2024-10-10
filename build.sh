@@ -3,33 +3,41 @@
 source /etc/profile
 BASE_PATH=$(cd $(dirname $0) && pwd)
 
-dev_mod=$1
-clear=$2
+Dev=$1
+Build_Mod=$2
 
-if [[ ! -f $BASE_PATH/diffconfig.$dev_mod ]]; then
-	echo "config not fond: diffconfig.$dev_mod"
-	exit 0
-fi
-
-$BASE_PATH/update.sh
-
-cd $BASE_PATH/immortalwrt-mt798x
-
-if [[ $clear == "clear" ]]; then
-	find ./ -name "*.ipk" | xargs \rm -f
-fi
-
-\cp -f $BASE_PATH/diffconfig.$dev_mod .config
-
-make defconfig
-
-if [[ $clear == "debug" ]]; then
+if [[ ! -f $BASE_PATH/deconfig/$Dev.config ]]; then
+    echo "config not fond"
     exit 0
 fi
 
-make download -j$(nproc)
-if [[ $clear == "clear" ]]; then
-	make V=s -j1
-else
-	make V=s -j$(nproc)
+if [[ ! -f $BASE_PATH/compilecfg/$Dev.ini ]]; then
+    echo "ini not fond"
+    exit 0
 fi
+
+read_ini_by_key() {
+    local key=$1
+    cat $BASE_PATH/compilecfg/$Dev.ini | awk -F"=" '/^'$key'/ {print $2}'
+}
+
+REPO_URL=$(read_ini_by_key "REPO_URL")
+REPO_BRANCH=$(read_ini_by_key "REPO_BRANCH")
+BUILD_DIR=$(read_ini_by_key "BUILD_DIR")
+if [[ -z $REPO_BRANCH ]]; then
+    REPO_BRANCH="main"
+fi
+
+$BASE_PATH/update.sh $REPO_URL $REPO_BRANCH $BASE_PATH/$BUILD_DIR
+
+\cp -f $BASE_PATH/deconfig/$Dev.config $BASE_PATH/$BUILD_DIR/.config
+
+cd $BASE_PATH/$BUILD_DIR
+make defconfig
+
+if [[ $Build_Mod == "debug" ]]; then
+	exit 0
+fi
+
+make download -j$(nproc)
+make -j$(nproc) || make -j1 || make -j1 V=s
