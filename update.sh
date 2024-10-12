@@ -43,7 +43,10 @@ reset_feeds_conf() {
 }
 
 update_feeds() {
-    echo "src-git small8 https://github.com/kenzok8/small-package" >> $BUILD_DIR/$FEEDS_CONF
+    sed -i '/^#/d' $BUILD_DIR/$FEEDS_CONF
+    if ! grep -q "small-package" $BUILD_DIR/$FEEDS_CONF; then
+        echo "src-git small8 https://github.com/kenzok8/small-package" >> $BUILD_DIR/$FEEDS_CONF
+    fi
     # sed -i 's#https://#git://#g' $BUILD_DIR/$FEEDS_CONF
     ./scripts/feeds clean
     ./scripts/feeds update -a
@@ -53,6 +56,7 @@ remove_unwanted_packages() {
     local luci_packages=(
         "luci-app-passwall" "luci-app-smartdns" "luci-app-ddns-go" "luci-app-rclone"
         "luci-app-ssr-plus" "luci-app-vssr" "luci-theme-argon" "luci-app-daed" "luci-app-dae"
+        "luci-app-alist" "luci-app-argon-config" "luci-app-homeproxy" "luci-app-haproxy-tcp"
     )
     local packages_net=(
         "haproxy" "xray-core" "xray-plugin" "dns2tcp" "dns2socks" "alist" "hysteria"
@@ -134,6 +138,21 @@ fix_miniupmpd() {
     fi
 }
 
+change_dnsmasq2full() {
+    if ! grep -q "dnsmasq-full" $BUILD_DIR/include/target.mk; then
+        sed -i 's/dnsmasq/dnsmasq-full/g' ./include/target.mk
+    fi
+}
+
+chk_fullconenat() {
+    if ! -d $BUILD_DIR/package/network/utils/fullconenat-nft; then
+        \cp -f $BASE_PATH/fullconenat/fullconenat-nft $BUILD_DIR/package/network/utils
+    fi
+    if ! -d $BUILD_DIR/package/network/utils/fullconenat; then
+        \cp -f $BASE_PATH/fullconenat/fullconenat $BUILD_DIR/package/network/utils
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -145,6 +164,8 @@ main() {
     fix_miniupmpd
     update_golang
     install_feeds
+    change_dnsmasq2full
+    chk_fullconenat
 }
 
 main "$@"
