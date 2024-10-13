@@ -36,10 +36,14 @@ clean_up() {
 }
 
 reset_feeds_conf() {
-    if git status | grep -qE "$FEEDS_CONF$"; then
-        git reset HEAD $FEEDS_CONF
-        git checkout $FEEDS_CONF
-    fi
+    git reset --hard origin/$REPO_BRANCH
+    git clean -fd
+    git checkout .
+    git pull
+    #if git status | grep -qE "$FEEDS_CONF$"; then
+    #    git reset HEAD $FEEDS_CONF
+    #    git checkout $FEEDS_CONF
+    #fi
 }
 
 update_feeds() {
@@ -145,11 +149,19 @@ change_dnsmasq2full() {
 }
 
 chk_fullconenat() {
-    if ! -d $BUILD_DIR/package/network/utils/fullconenat-nft; then
-        \cp -f $BASE_PATH/fullconenat/fullconenat-nft $BUILD_DIR/package/network/utils
+    if [[ ! -d $BUILD_DIR/package/network/utils/fullconenat-nft ]]; then
+        \cp -rf $BASE_PATH/fullconenat/fullconenat-nft $BUILD_DIR/package/network/utils
     fi
-    if ! -d $BUILD_DIR/package/network/utils/fullconenat; then
-        \cp -f $BASE_PATH/fullconenat/fullconenat $BUILD_DIR/package/network/utils
+    if [[ ! -d $BUILD_DIR/package/network/utils/fullconenat ]]; then
+        \cp -rf $BASE_PATH/fullconenat/fullconenat $BUILD_DIR/package/network/utils
+    fi
+}
+
+update_ath11k_fw() {
+    if [[ -d $BUILD_DIR/package/firmware/ath11k-firmware ]]; then
+        if grep -qP "PKG_SOURCE_VERSION:=795809c7041582bd51bdfaa1f548b916ae8d4382" $BUILD_DIR/package/firmware/ath11k-firmware/Makefile; then
+            \cp -f $BASE_PATH/patches/Makefile.ath11k $BUILD_DIR/package/firmware/ath11k-firmware/Makefile
+        fi
     fi
 }
 
@@ -163,9 +175,10 @@ main() {
     fix_default_set
     fix_miniupmpd
     update_golang
-    install_feeds
     change_dnsmasq2full
     chk_fullconenat
+    update_ath11k_fw
+    install_feeds
 }
 
 main "$@"
