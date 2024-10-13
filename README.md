@@ -13,4 +13,4 @@ uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
 
 执行编译：  
 雅典娜、亚瑟  
-./build.sh jdcipq60xx
+./build.sh jdclib
