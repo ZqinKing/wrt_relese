@@ -39,8 +39,10 @@ if [[ $Build_Mod == "debug" ]]; then
     exit 0
 fi
 
-find ./$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec rm -f {} \;
-find ./$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec rm -f {} \;
+if [[ -d ./$BUILD_DIR/bin/targets ]]; then
+    find ./$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec rm -f {} \;
+    find ./$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec rm -f {} \;
+fi
 
 make download -j$(nproc)
 make -j$(nproc) || make -j1 || make -j1 V=s
