@@ -165,6 +165,10 @@ update_ath11k_fw() {
     fi
 }
 
+fix_qualcommax_mk() {
+    sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
+}
+
 main() {
     clone_repo
     clean_up
@@ -178,6 +182,7 @@ main() {
     change_dnsmasq2full
     chk_fullconenat
     update_ath11k_fw
+    fix_qualcommax_mk
     install_feeds
 }
 
