@@ -41,3 +41,8 @@ fi
 
 make download -j$(nproc)
 make -j$(nproc) || make -j1 || make -j1 V=s
+
+\rm -rf $BASE_PATH/firmware
+mkdir -p $BASE_PATH/firmware
+find ./$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec mv -f {} ./firmware/ \;
+find ./$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec mv -f {} ./firmware/ \;
