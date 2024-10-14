@@ -48,11 +48,18 @@ jobs:
           /var/lib/mysql* /var/log/azure*"
         testing: false
 
+    - name: Cache Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache
+        key: ${{ runner.os }}-build-${{ hashFiles('**/build.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+
     - name: Initialization Environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        docker rmi $(docker images -q)
         sudo -E apt -yqq update
         sudo -E apt -yqq full-upgrade
         sudo -E apt -yqq autoremove --purge
@@ -63,13 +70,17 @@ jobs:
         sudo -E systemctl daemon-reload
         sudo -E timedatectl set-timezone "Asia/Shanghai"
 
+    - name: Initialization Values
+      run: |
+        export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
+          
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
 
     - name: Release Firmware
       uses: softprops/action-gh-release@master
       with:
-        tag_name: ${{env.WRT_TARGET}}_${{env.WRT_VER}}_${{env.WRT_DATE}}
+        tag_name: ${{inputs.model}}_${{env.BUILD_DATE}}
         files: ./firmware/*.*
         body: |
             云编译固件
