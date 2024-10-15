@@ -167,6 +167,10 @@ update_ath11k_fw() {
 
 fix_qualcommax_mk() {
     sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
+    if ! grep -q "lan1" "$BUILD_DIR/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq6018-jdcloud-ax1800-pro.dts"; then
+        \cp -f "$BASE_PATH/patches/ipq6018-jdcloud-ax1800-pro.dts" \
+            "$BUILD_DIR/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom"
+    fi
 }
 
 main() {
