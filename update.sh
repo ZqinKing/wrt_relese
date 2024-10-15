@@ -149,10 +149,10 @@ change_dnsmasq2full() {
 }
 
 chk_fullconenat() {
-    if [[ ! -d $BUILD_DIR/package/network/utils/fullconenat-nft ]]; then
+    if [ ! -d $BUILD_DIR/package/network/utils/fullconenat-nft ]; then
         \cp -rf $BASE_PATH/fullconenat/fullconenat-nft $BUILD_DIR/package/network/utils
     fi
-    if [[ ! -d $BUILD_DIR/package/network/utils/fullconenat ]]; then
+    if [ ! -d $BUILD_DIR/package/network/utils/fullconenat ]; then
         \cp -rf $BASE_PATH/fullconenat/fullconenat $BUILD_DIR/package/network/utils
     fi
 }
@@ -173,6 +173,13 @@ fix_qualcommax_mk() {
     fi
 }
 
+fix_upgrade_script() {
+    if [ ! -f $BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib/upgrade/mmc.sh ]; then
+        \cp -f "$BASE_PATH/patches/mmc.sh" \
+            "$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib/upgrade"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -187,6 +194,7 @@ main() {
     chk_fullconenat
     update_ath11k_fw
     fix_qualcommax_mk
+    fix_upgrade_script
     install_feeds
 }
 
