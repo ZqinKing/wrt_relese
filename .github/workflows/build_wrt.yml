@@ -21,7 +21,6 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  BUILD_DATE: ${{ steps.set_build_date.outputs.build_date }}
 
 jobs:
   build:
@@ -72,9 +71,10 @@ jobs:
         sudo -E systemctl daemon-reload
         sudo -E timedatectl set-timezone "Asia/Shanghai"
 
-    - name: Set Build Date
-      id: set_build_date
-      run: echo "build_date=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")" >> $GITHUB_ENV
+    - name: Initialization Values
+      run: |
+        export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
+        echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
 
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
