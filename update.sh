@@ -167,6 +167,11 @@ update_ath11k_fw() {
 
 fix_qualcommax_mk() {
     sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
+    if [[ -f $BUILD_DIR/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq6018-xiaomi.dtsi ]]; then
+        if [[ ! -f $BUILD_DIR/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom/ipq6018-cpufreq.dtsi ]]; then
+            \cp -f $BASE_PATH/patches/ipq6018-cpufreq.dtsi $BUILD_DIR/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom
+        fi
+    fi
 }
 
 main() {
