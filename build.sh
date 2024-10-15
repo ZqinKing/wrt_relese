@@ -39,9 +39,9 @@ if [[ $Build_Mod == "debug" ]]; then
     exit 0
 fi
 
-if [[ -d ./$BUILD_DIR/bin/targets ]]; then
-    find ./$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec rm -f {} \;
-    find ./$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec rm -f {} \;
+if [[ -d $BASE_PATH/$BUILD_DIR/bin/targets ]]; then
+    find $BASE_PATH/$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec rm -f {} \;
+    find $BASE_PATH/$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec rm -f {} \;
 fi
 
 make download -j$(nproc)
@@ -49,5 +49,5 @@ make -j$(nproc) || make -j1 || make -j1 V=s
 
 \rm -rf $BASE_PATH/firmware
 mkdir -p $BASE_PATH/firmware
-find ./$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec mv -f {} ./firmware/ \;
-find ./$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec mv -f {} ./firmware/ \;
+find $BASE_PATH/$BUILD_DIR/bin/targets/ -type f -name "*.bin" -exec mv -f {} $BASE_PATH/firmware/ \;
+find $BASE_PATH/$BUILD_DIR/bin/targets/ -type f -name "*.manifest" -exec mv -f {} $BASE_PATH/firmware/ \;
