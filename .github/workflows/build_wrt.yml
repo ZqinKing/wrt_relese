@@ -8,12 +8,13 @@ on:
         required: true
         description: Device Model
         type: choice
-        default: jdc_ax1800pro-ax6600_ipqwrt
+        default: jdc_ax1800pro-ax6600_libwrt
         options:
           - jdc_ax1800pro-ax6600_ipqwrt
           - jdc_ax1800pro-ax6600_libwrt
           - rax3000m_immwrt21
           - redmi_ax6000_immwrt21
+          - jdc_ax6000_imm23
       runs-on:
         required: true
         description: Runs on...
