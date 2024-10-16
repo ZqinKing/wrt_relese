@@ -11,6 +11,13 @@ libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgcon
 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo \  
 uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev  
 
-执行编译：  
-雅典娜、亚瑟  
-./build.sh jdclib
+
+使用步骤：  
+git clone https://github.com/ZqinKing/wrt_relese.git  
+cd wrt_relese  
+  
+执行编译雅典娜、亚瑟:  
+./build.sh jdc_ax1800pro-ax6600_ipqwrt  
+
+执行编译红米AX6000:  
+./build.sh redmi_ax6000_immwrt21  
