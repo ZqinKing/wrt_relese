@@ -7,8 +7,13 @@ on:
       model:
         required: true
         description: Device Model
-        type: string
-        default: jdcipq
+        type: choice
+        default: jdc_ax1800pro-ax6600_ipqwrt
+        options:
+          - jdc_ax1800pro-ax6600_ipqwrt
+          - jdc_ax1800pro-ax6600_libwrt
+          - rax3000m_immwrt21
+          - redmi_ax6000_immwrt21
       runs-on:
         required: true
         description: Runs on...
@@ -17,7 +22,7 @@ on:
         options:
           - ubuntu-20.04
           - ubuntu-22.04
-          - ubuntu-latest  
+          - ubuntu-latest
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,5 +87,5 @@ jobs:
     - name: Upload Firmware
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.model }}_${{ env.BUILD_DATE }}
+        name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
         path: ./firmware/*.*
