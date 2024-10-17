@@ -43,12 +43,15 @@ jobs:
         export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
         echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
 
+    - name: Prepare Release Body
+      run: |
+        echo "云编译发布" > release_body.txt
+        echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
+        echo "插件：$(grep -oP "luci-app-[a-z0-9]{1,20}" ./firmware/*.manifest | awk -F":" '{print $NF}')" >> release_body.txt
+
     - name: Release Firmware
       uses: softprops/action-gh-release@master
       with:
         tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
         files: ./testdir/*.*
-        body: |
-          云编译发布测试
-          源码：${{env.BUILD_SRC}}
-          插件：$(grep -oP "luci-app-[a-z0-9]{1,20}" ./firmware/*.manifest | awk -F":" '{print $NF}')
+        body_path: ./release_body.txt
