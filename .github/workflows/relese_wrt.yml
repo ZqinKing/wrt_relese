@@ -84,11 +84,14 @@ jobs:
         echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
         export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
         echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
-        export BUILD_APP=$(grep -oP "luci-app-[a-z0-9]{1,20}" ./firmware/*.manifest | awk -F":" '{print $NF}')
-        echo "BUILD_APP=$BUILD_APP" >> $GITHUB_ENV
     
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
+
+    - name: Set BUILD_APP
+      run: |
+        export BUILD_APP=$(grep -oP "luci-app-[a-z0-9]{1,20}" ./firmware/*.manifest | awk -F":" '{print $NF}')
+        echo "BUILD_APP=$BUILD_APP" >> $GITHUB_ENV
 
     - name: Release Firmware
       uses: softprops/action-gh-release@master
