@@ -54,3 +54,4 @@ FIRMWARE_DIR="$BASE_PATH/firmware"
 \rm -rf "$FIRMWARE_DIR"
 mkdir -p "$FIRMWARE_DIR"
 find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" \) -exec mv -f {} "$FIRMWARE_DIR/" \;
+\rm -f "$BASE_PATH/firmware/Packages.manifest" 2>/dev/null
