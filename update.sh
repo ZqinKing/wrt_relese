@@ -181,12 +181,6 @@ fix_qualcommax_mk() {
     if [ -f $BUILD_DIR/target/linux/qualcommax/Makefile ]; then
         sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
     fi
-    local qcom_dts_path="$BUILD_DIR/target/linux/qualcommax/files/arch/arm64/boot/dts/qcom"
-    if [ -d $qcom_dts_path ]; then
-        if ! grep -q "lan1" $qcom_dts_path/ipq6018-jdcloud-ax1800-pro.dts; then
-            \cp -f $BASE_PATH/patches/ipq6018-jdcloud-ax1800-pro.dts $qcom_dts_path
-        fi
-    fi
 }
 
 fix_upgrade_script() {
