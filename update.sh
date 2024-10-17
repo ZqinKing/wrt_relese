@@ -164,17 +164,6 @@ update_ath11k_fw() {
             \cp -f $BASE_PATH/patches/Makefile.ath11k $ath11k_fw_path/Makefile
         fi
     fi
-    local ath11k_caldata_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib/preinit"
-    if [ ! -d $ath11k_caldata_path ]; then
-        if [ -d $BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib ]; then
-            mkdir -p $ath11k_caldata_path
-            \cp -f $BASE_PATH/patches/81_fix_eeprom $ath11k_caldata_path
-        fi
-    else
-        if [ ! -f $ath11k_caldata_path/81_fix_eeprom ]; then
-            \cp -f $BASE_PATH/patches/81_fix_eeprom $ath11k_caldata_path
-        fi
-    fi
 }
 
 fix_qualcommax_mk() {
