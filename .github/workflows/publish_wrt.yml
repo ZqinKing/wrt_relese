@@ -1,5 +1,5 @@
-name: Publish WRT
-run-name: Publish - ${{ inputs.model }}
+name: Relese WRT
+run-name: Relese - ${{ inputs.model }}
 
 on:
   workflow_dispatch:
@@ -96,6 +96,6 @@ jobs:
         tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
         files: ./firmware/*.*
         body: |
-        云编译发布
-        源码：${{env.BUILD_SRC}}
-        插件：${{env.BUILD_APP}}
+          云编译发布
+          源码：${{env.BUILD_SRC}}
+          插件：${{env.BUILD_APP}}
