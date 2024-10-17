@@ -88,17 +88,16 @@ jobs:
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
 
-    - name: Set BUILD_APP
+    - name: Prepare Release Body
       run: |
-        export BUILD_APP=$(grep -oP "luci-app-[a-z0-9]{1,20}" ./firmware/*.manifest | awk -F":" '{print $NF}')
-        echo "BUILD_APP=$BUILD_APP" >> $GITHUB_ENV
+        echo "云编译发布" > release_body.txt
+        echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
+        echo "插件：" >> release_body.txt
+        echo "$(grep -oP "luci-app-[a-zA-Z0-9]{1,30}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
 
     - name: Release Firmware
       uses: softprops/action-gh-release@master
       with:
         tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
         files: ./firmware/*.*
-        body: |
-          云编译发布
-          源码：${{env.BUILD_SRC}}
-          插件：${{env.BUILD_APP}}
+        body_path: ./release_body.txt
