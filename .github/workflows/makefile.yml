@@ -1,0 +1,54 @@
+name: Test WRT
+run-name: Test - ${{ inputs.model }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        required: true
+        description: Device Model
+        type: choice
+        default: jdc_ax1800pro-ax6600_libwrt
+        options:
+          - jdc_ax1800pro-ax6600_ipqwrt
+          - jdc_ax1800pro-ax6600_libwrt
+          - jdc_ax1800pro-ax6600_immwrt
+          - rax3000m_immwrt21
+          - redmi_ax6000_immwrt21
+          - jdc_ax6000_imm23
+      runs-on:
+        required: true
+        description: Runs on...
+        type: choice
+        default: ubuntu-20.04
+        options:
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-latest
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runs-on }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Initialization Values
+      run: |
+        export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
+        echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+        export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
+        echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
+
+    - name: Release Firmware
+      uses: softprops/action-gh-release@master
+      with:
+        tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
+        files: ./testdir/*.*
+        body: |
+          云编译发布测试
+          源码：${{env.BUILD_SRC}}
+          插件：$(grep -oP "luci-app-[a-z0-9]{1,20}" ./firmware/*.manifest | awk -F":" '{print $NF}')
