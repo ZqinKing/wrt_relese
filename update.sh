@@ -183,15 +183,6 @@ fix_qualcommax_mk() {
     fi
 }
 
-fix_upgrade_script() {
-    if [ -d $BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib/upgrade ]; then
-        if [ ! -f $BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib/upgrade/mmc.sh ]; then
-            \cp -f "$BASE_PATH/patches/mmc.sh" \
-                "$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/lib/upgrade"
-        fi
-    fi
-}
-
 main() {
     clone_repo
     clean_up
@@ -206,7 +197,6 @@ main() {
     chk_fullconenat
     update_ath11k_fw
     fix_qualcommax_mk
-    fix_upgrade_script
     install_feeds
 }
 
