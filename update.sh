@@ -157,7 +157,8 @@ chk_fullconenat() {
     fi
 }
 
-fix_qualcommax_mk() {
+fix_mk_def_depends() {
+    sed -i 's/libustream-mbedtls/libustream-openssl/g' $BUILD_DIR/include/target.mk 2>/dev/null
     if [ -f $BUILD_DIR/target/linux/qualcommax/Makefile ]; then
         sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
     fi
@@ -175,7 +176,7 @@ main() {
     update_golang
     change_dnsmasq2full
     chk_fullconenat
-    fix_qualcommax_mk
+    fix_mk_def_depends
     install_feeds
 }
 
