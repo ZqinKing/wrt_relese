@@ -157,15 +157,6 @@ chk_fullconenat() {
     fi
 }
 
-update_ath11k_fw() {
-    local ath11k_fw_path="$BUILD_DIR/package/firmware/ath11k-firmware"
-    if [[ -d $ath11k_fw_path ]]; then
-        if grep -qP "PKG_SOURCE_VERSION:=795809c7041582bd51bdfaa1f548b916ae8d4382" $ath11k_fw_path/Makefile; then
-            \cp -f $BASE_PATH/patches/Makefile.ath11k $ath11k_fw_path/Makefile
-        fi
-    fi
-}
-
 fix_qualcommax_mk() {
     if [ -f $BUILD_DIR/target/linux/qualcommax/Makefile ]; then
         sed -i 's/wpad-basic-mbedtls/wpad-openssl/g' $BUILD_DIR/target/linux/qualcommax/Makefile
@@ -184,7 +175,6 @@ main() {
     update_golang
     change_dnsmasq2full
     chk_fullconenat
-    update_ath11k_fw
     fix_qualcommax_mk
     install_feeds
 }
