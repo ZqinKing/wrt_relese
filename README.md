@@ -17,7 +17,7 @@ git clone https://github.com/ZqinKing/wrt_relese.git
 cd wrt_relese  
   
 执行编译雅典娜、亚瑟:  
-./build.sh jdc_ax1800pro-ax6600_ipqwrt  
+./build.sh jdc_ax1800pro-ax6600_libwrt  
 
 执行编译红米AX6000:  
 ./build.sh redmi_ax6000_immwrt21  
