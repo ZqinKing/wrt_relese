@@ -98,24 +98,27 @@ update_golang() {
     fi
 }
 
-install_feeds() {
-    ./scripts/feeds update -i
-    ./scripts/feeds install -f -ap packages
-    ./scripts/feeds install -f -ap luci
-    ./scripts/feeds install -f -ap routing
-    ./scripts/feeds install -f -ap telephony
-    if [[ -d ./feeds/nss_packages ]]; then
-        ./scripts/feeds install -f -ap nss_packages
-    fi
-    if [[ -d ./feeds/sqm_scripts_nss ]]; then
-        ./scripts/feeds install -f -ap sqm_scripts_nss
-    fi 
+install_small8() {
     ./scripts/feeds install -p small8 -f xray-core xray-plugin dns2tcp dns2socks haproxy hysteria naiveproxy \
         shadowsocks-rust sing-box v2ray-core v2ray-geodata v2ray-plugin tuic-client chinadns-ng ipt2socks tcping \
         trojan-plus simple-obfs shadowsocksr-libev luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns \
         v2dat mosdns luci-app-mosdns adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm \
         luci-lib-taskd luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky
+}
+
+install_feeds() {
+    ./scripts/feeds update -i
+    for dir in $BUILD_DIR/feeds/*; do
+        # 检查是否为目录并且不以 .tmp 结尾，并且不是软链接
+        if [ -d "$dir" ] && [[ ! "$dir" == *.tmp ]] && [ ! -L "$dir" ]; then
+            if [[ $(basename "$dir") == "small8" ]]; then
+                install_small8
+            else
+                ./scripts/feeds install -f -ap $(basename "$dir")
+            fi
+        fi
+    done
 }
 
 fix_default_set() {
