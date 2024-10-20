@@ -22,5 +22,5 @@ cd wrt_relese
 编译红米AX6000:  
 ./build.sh redmi_ax6000_immwrt21  
 
-编译京东云百里: 
+编译京东云百里:   
 ./build.sh jdc_ax6000_imm23
