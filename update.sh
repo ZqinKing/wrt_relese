@@ -167,6 +167,12 @@ fix_mk_def_depends() {
     fi
 }
 
+add_wifi_default_set() {
+    if [ -d $BUILD_DIR/package/base-files/files/etc/uci-defaults ]; then
+        \cp -f $BASE_PATH/patches/992_set-wifi-uci.sh $BUILD_DIR/package/base-files/files/etc/uci-defaults
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -180,6 +186,7 @@ main() {
     change_dnsmasq2full
     chk_fullconenat
     fix_mk_def_depends
+    add_wifi_default_set
     install_feeds
 }
 
