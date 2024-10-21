@@ -92,6 +92,7 @@ jobs:
       run: |
         echo "云编译发布" > release_body.txt
         echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
+        echo "WIFI密码：12345678" >> release_body.txt
         echo "插件：" >> release_body.txt
         echo "$(grep -oP "luci-app-[a-zA-Z0-9]{1,30}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
 
