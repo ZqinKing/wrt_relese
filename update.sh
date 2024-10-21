@@ -8,6 +8,7 @@ BASE_PATH=$(cd $(dirname $0) && pwd)
 REPO_URL=$1
 REPO_BRANCH=$2
 BUILD_DIR=$3
+COMMIT_HASH=$4
 
 FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
@@ -36,10 +37,13 @@ clean_up() {
 }
 
 reset_feeds_conf() {
+    git checkout $REPO_BRANCH
     git reset --hard origin/$REPO_BRANCH
     git clean -fd
-    git checkout .
-    git pull
+    git pull origin $REPO_BRANCH
+    if [[ $COMMIT_HASH != "none" ]]; then
+        git checkout $COMMIT_HASH
+    fi
     #if git status | grep -qE "$FEEDS_CONF$"; then
     #    git reset HEAD $FEEDS_CONF
     #    git checkout $FEEDS_CONF

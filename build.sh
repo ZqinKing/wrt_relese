@@ -28,10 +28,12 @@ read_ini_by_key() {
 
 REPO_URL=$(read_ini_by_key "REPO_URL")
 REPO_BRANCH=$(read_ini_by_key "REPO_BRANCH")
-BUILD_DIR=$(read_ini_by_key "BUILD_DIR")
 REPO_BRANCH=${REPO_BRANCH:-main}
+BUILD_DIR=$(read_ini_by_key "BUILD_DIR")
+COMMIT_HASH=$(read_ini_by_key "COMMIT_HASH")
+COMMIT_HASH=${COMMIT_HASH:-none}
 
-$BASE_PATH/update.sh "$REPO_URL" "$REPO_BRANCH" "$BASE_PATH/$BUILD_DIR"
+$BASE_PATH/update.sh "$REPO_URL" "$REPO_BRANCH" "$BASE_PATH/$BUILD_DIR" "$COMMIT_HASH"
 
 \cp -f "$CONFIG_FILE" "$BASE_PATH/$BUILD_DIR/.config"
 
