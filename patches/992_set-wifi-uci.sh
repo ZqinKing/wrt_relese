@@ -24,6 +24,7 @@ configure_wifi() {
     uci set wireless.default_radio${radio}.ssid="${ssid}"
     uci set wireless.default_radio${radio}.key="${key}"
     uci set wireless.default_radio${radio}.ieee80211k='1'
+    uci set wireless.default_radio${radio}.time_advertisement='2'
     uci set wireless.default_radio${radio}.time_zone='CST-8'
     uci set wireless.default_radio${radio}.wnm_sleep_mode='1'
     uci set wireless.default_radio${radio}.wnm_sleep_mode_no_keys='1'
