@@ -15,6 +15,7 @@ configure_wifi() {
     uci set wireless.radio${radio}.mu_beamformer='1'
     uci set wireless.radio${radio}.country='US'
     uci set wireless.radio${radio}.txpower="${txpower}"
+    uci set wireless.radio${radio}.disabled='0'
     uci set wireless.default_radio${radio}.encryption='psk2+ccmp'
     uci set wireless.default_radio${radio}.ssid="${ssid}"
     uci set wireless.default_radio${radio}.key="${key}"
@@ -49,3 +50,4 @@ case "${board_name}" in
 esac
 
 uci commit wireless
+/etc/init.d/network restart
