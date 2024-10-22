@@ -14,7 +14,7 @@ FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
 GOLANG_BRANCH="23.x"
 THEME_SET="argon"
-#SSID_NAME="Newifi2_D1"
+LAN_ADDR="192.168.1.1"
 
 clone_repo() {
     if [[ ! -d $BUILD_DIR ]]; then
@@ -55,7 +55,6 @@ update_feeds() {
     if ! grep -q "small-package" $BUILD_DIR/$FEEDS_CONF; then
         echo "src-git small8 https://github.com/kenzok8/small-package" >> $BUILD_DIR/$FEEDS_CONF
     fi
-    # sed -i 's#https://#git://#g' $BUILD_DIR/$FEEDS_CONF
     ./scripts/feeds clean
     ./scripts/feeds update -a
 }
@@ -129,7 +128,6 @@ install_feeds() {
 fix_default_set() {
     #修改默认主题
     sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
-    #sed -i "s/\.ssid=.*/\.ssid=$SSID_NAME/g" $(find ./package/kernel/mac80211/ -type f -name "mac80211.sh")
 
     if [[ -f ./package/emortal/autocore/files/tempinfo ]]; then
         if [[ -f $BASE_PATH/patches/tempinfo ]]; then
@@ -178,11 +176,17 @@ add_wifi_default_set() {
     fi
 }
 
+update_default_lan_addr() {
+    local CFG_PATH="$BUILD_DIR/package/base-files/files/bin/config_generate"
+    if [ -f $CFG_PATH ]; then
+        sed -i 's/192\.168\.[0-9]*\.[0-9]*/'$LAN_ADDR'/g' $CFG_PATH
+    fi
+}
+
 main() {
     clone_repo
     clean_up
     reset_feeds_conf
-    git pull
     update_feeds
     remove_unwanted_packages
     fix_default_set
@@ -192,6 +196,7 @@ main() {
     chk_fullconenat
     fix_mk_def_depends
     add_wifi_default_set
+    update_default_lan_addr
     install_feeds
 }
 
