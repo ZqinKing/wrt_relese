@@ -9,6 +9,10 @@ configure_wifi() {
     local txpower=$4
     local ssid=$5
     local key=$6
+    local now_encryption=$(uci get wireless.default_radio${radio}.encryption)
+    if [ -n "$now_encryption" ] && [ "$now_encryption" != "none" ]; then
+        return 0
+    fi
 
     uci set wireless.radio${radio}.channel="${channel}"
     uci set wireless.radio${radio}.htmode="${htmode}"
