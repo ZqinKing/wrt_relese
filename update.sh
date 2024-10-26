@@ -183,6 +183,21 @@ update_default_lan_addr() {
     fi
 }
 
+remove_something_nss_kmod() {
+    local ipq_target_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/target.mk"
+    if [ -f $ipq_target_path ]; then
+        sed -i 's/kmod-qca-nss-drv-eogremgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-gre//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-pvxlanmgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-vxlanmgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-mirror//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-tun6rd//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-tunipip6//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-macsec//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-match//g' $ipq_target_path
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -197,6 +212,7 @@ main() {
     fix_mk_def_depends
     add_wifi_default_set
     update_default_lan_addr
+    remove_something_nss_kmod
     install_feeds
 }
 
