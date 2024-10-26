@@ -198,6 +198,13 @@ remove_something_nss_kmod() {
     fi
 }
 
+fix_dnsmasq_tmpdir() {
+    local dnsmasq_init_path="$BUILD_DIR/package/network/services/dnsmasq/files/dnsmasq.init"
+    if [ -f $dnsmasq_init_path ]; then
+        sed -i 's/\/tmp\/dnsmasq${cfg:+.$cfg}.d/\/tmp\/dnsmasq.d/g' $dnsmasq_init_path
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -213,6 +220,7 @@ main() {
     add_wifi_default_set
     update_default_lan_addr
     remove_something_nss_kmod
+    fix_dnsmasq_tmpdir
     install_feeds
 }
 
