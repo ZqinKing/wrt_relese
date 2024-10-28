@@ -216,9 +216,18 @@ install_athena_led() {
             git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
             sed -i '/gift/d' "$athena_led_path/luasrc/controller/athena_led.lua"
             [ -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm" ] && \rm -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm"
+
+            local athena_led_file="$athena_led_path/root/usr/sbin/athena-led"
+            if [ -f "$athena_led_file" ]; then
+                local file_hash=$(sha256sum "$athena_led_file" | awk '{ print $1 }')
+                if [ "$file_hash" = "5f88e00a636b14f82225601f46a5116e053cd1784fa40d8ebbb2fba39f3ec590" ]; then
+                    \cp -f "$BASE_PATH/patches/athena-led" "$athena_led_file"
+                fi
+            fi
         fi
     fi
 }
+
 
 main() {
     clone_repo
