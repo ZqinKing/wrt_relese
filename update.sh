@@ -205,6 +205,14 @@ fix_dnsmasq_tmpdir() {
     fi
 }
 
+install_athena_led() {
+    local athena_led_path="$BUILD_DIR/package/luci-app-athena-led"
+    if [ ! -d $athena_led_path ]; then
+        git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git $athena_led_path
+        sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $athena_led_path/Makefile
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -222,6 +230,7 @@ main() {
     remove_something_nss_kmod
     fix_dnsmasq_tmpdir
     install_feeds
+    install_athena_led
 }
 
 main "$@"
