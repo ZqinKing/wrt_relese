@@ -206,12 +206,18 @@ fix_dnsmasq_tmpdir() {
 }
 
 install_athena_led() {
+    local ipq60xx_mk_path="$BUILD_DIR/target/linux/qualcommax/image/ipq60xx.mk"
     local athena_led_path="$BUILD_DIR/package/luci-app-athena-led"
-    if [ ! -d $athena_led_path ]; then
-        git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git $athena_led_path
-        sed -i 's/..\/..\/luci.mk/$(TOPDIR)\/feeds\/luci\/luci.mk/g' $athena_led_path/Makefile
+
+    if [ -f "$ipq60xx_mk_path" ] && ! grep -q "luci-app-athena-led" "$ipq60xx_mk_path"; then
+        sed -i 's/ipq-wifi-jdcloud_ax6600 kmod-ath11k-pci ath11k-firmware-qcn9074 kmod-fs-ext4 mkf2fs f2fsck kmod-fs-f2fs/ipq-wifi-jdcloud_ax6600 kmod-ath11k-pci ath11k-firmware-qcn9074 kmod-fs-ext4 mkf2fs f2fsck kmod-fs-f2fs luci-app-athena-led/g' "$ipq60xx_mk_path"
+
+        if [ ! -d "$athena_led_path" ]; then
+            git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
+        fi
     fi
 }
+
 
 main() {
     clone_repo
