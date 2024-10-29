@@ -37,9 +37,9 @@ clean_up() {
 }
 
 reset_feeds_conf() {
-    git checkout $REPO_BRANCH
+    git checkout origin/$REPO_BRANCH
     git reset --hard origin/$REPO_BRANCH
-    git clean -fd
+    git clean -f -d
     git pull origin $REPO_BRANCH
     if [[ $COMMIT_HASH != "none" ]]; then
         git checkout $COMMIT_HASH
@@ -212,8 +212,9 @@ install_athena_led() {
     if [ -f "$ipq60xx_mk_path" ] && ! grep -q "luci-app-athena-led" "$ipq60xx_mk_path"; then
         sed -i '/ipq-wifi-jdcloud_ax6600 kmod-ath11k-pci ath11k-firmware-qcn9074 kmod-fs-ext4 mkf2fs f2fsck kmod-fs-f2fs/ s/$/ luci-app-athena-led/' "$ipq60xx_mk_path"
 
-        if [ ! -d "$athena_led_path" ]; then
-            git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
+        \rm -rf $athena_led_path
+        git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
+        if [ -d $athena_led_path ]; then
             sed -i '/gift/d' "$athena_led_path/luasrc/controller/athena_led.lua"
             [ -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm" ] && \rm -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm"
 
