@@ -198,37 +198,36 @@ remove_something_nss_kmod() {
     fi
 }
 
-fix_dnsmasq_tmpdir() {
-    local dnsmasq_init_path="$BUILD_DIR/package/network/services/dnsmasq/files/dnsmasq.init"
-    if [ -f $dnsmasq_init_path ]; then
-        sed -i 's/\/tmp\/dnsmasq${cfg:+.$cfg}.d/\/tmp\/dnsmasq.d/g' $dnsmasq_init_path
-    fi
-}
+#fix_dnsmasq_tmpdir() {
+#    local dnsmasq_init_path="$BUILD_DIR/package/network/services/dnsmasq/files/dnsmasq.init"
+#    if [ -f $dnsmasq_init_path ]; then
+#        sed -i 's/\/tmp\/dnsmasq${cfg:+.$cfg}.d/\/tmp\/dnsmasq.d/g' $dnsmasq_init_path
+#    fi
+#}
 
-install_athena_led() {
-    local ipq60xx_mk_path="$BUILD_DIR/target/linux/qualcommax/image/ipq60xx.mk"
-    local athena_led_path="$BUILD_DIR/package/luci-app-athena-led"
-
-    if [ -f "$ipq60xx_mk_path" ] && ! grep -q "luci-app-athena-led" "$ipq60xx_mk_path"; then
-        sed -i '/ipq-wifi-jdcloud_ax6600 kmod-ath11k-pci ath11k-firmware-qcn9074 kmod-fs-ext4 mkf2fs f2fsck kmod-fs-f2fs/ s/$/ luci-app-athena-led/' "$ipq60xx_mk_path"
-
-        \rm -rf $athena_led_path
-        git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
-        if [ -d $athena_led_path ]; then
-            sed -i '/gift/d' "$athena_led_path/luasrc/controller/athena_led.lua"
-            [ -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm" ] && \rm -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm"
-
-            local athena_led_file="$athena_led_path/root/usr/sbin/athena-led"
-            if [ -f "$athena_led_file" ]; then
-                local file_hash=$(sha256sum "$athena_led_file" | awk '{ print $1 }')
-                if [ "$file_hash" = "5f88e00a636b14f82225601f46a5116e053cd1784fa40d8ebbb2fba39f3ec590" ]; then
-                    \cp -f "$BASE_PATH/patches/athena-led" "$athena_led_file"
-                fi
-            fi
-        fi
-    fi
-}
-
+#install_athena_led() {
+#    local ipq60xx_mk_path="$BUILD_DIR/target/linux/qualcommax/image/ipq60xx.mk"
+#    local athena_led_path="$BUILD_DIR/package/luci-app-athena-led"
+#
+#    if [ -f "$ipq60xx_mk_path" ] && ! grep -q "luci-app-athena-led" "$ipq60xx_mk_path"; then
+#        sed -i '/ipq-wifi-jdcloud_ax6600 kmod-ath11k-pci ath11k-firmware-qcn9074 kmod-fs-ext4 mkf2fs f2fsck kmod-fs-f2fs/ s/$/ luci-app-athena-led/' "$ipq60xx_mk_path"
+#
+#        \rm -rf $athena_led_path
+#        git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
+#        if [ -d $athena_led_path ]; then
+#            sed -i '/gift/d' "$athena_led_path/luasrc/controller/athena_led.lua"
+#            [ -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm" ] && \rm -f "$athena_led_path/luasrc/view/athena_led/athena_led_gift.htm"
+#
+#            local athena_led_file="$athena_led_path/root/usr/sbin/athena-led"
+#            if [ -f "$athena_led_file" ]; then
+#                local file_hash=$(sha256sum "$athena_led_file" | awk '{ print $1 }')
+#                if [ "$file_hash" = "5f88e00a636b14f82225601f46a5116e053cd1784fa40d8ebbb2fba39f3ec590" ]; then
+#                    \cp -f "$BASE_PATH/patches/athena-led" "$athena_led_file"
+#                fi
+#            fi
+#        fi
+#    fi
+#}
 
 main() {
     clone_repo
@@ -245,8 +244,8 @@ main() {
     add_wifi_default_set
     update_default_lan_addr
     remove_something_nss_kmod
-    fix_dnsmasq_tmpdir
-    install_athena_led
+    #fix_dnsmasq_tmpdir
+    #install_athena_led
     install_feeds
 }
 
