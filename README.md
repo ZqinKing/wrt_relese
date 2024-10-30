@@ -1,8 +1,8 @@
 首先装好 Linux 系统，推荐 Ubuntu LTS  
 
 安装编译依赖  
-sudo apt update -y  
-sudo apt full-upgrade -y  
+sudo apt -y update  
+sudo apt -y full-upgrade  
 sudo apt install -y dos2unix libfuse-dev  
 sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'  
 
