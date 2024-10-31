@@ -218,6 +218,15 @@ remove_affinity_script() {
     [ -f "$affinity_script_path" ] && rm -f "$affinity_script_path"
 }
 
+fix_build_for_openssl() {
+    local makefile="$BUILD_DIR/package/libs/openssl/Makefile"
+    
+    if [ -f "$makefile" ]; then
+        sed -i '/^ifndef CONFIG_OPENSSL_SSL3/i CONFIG_OPENSSL_SSL3 := y' "$makefile"
+    fi
+}
+
+
 main() {
     clone_repo
     clean_up
@@ -234,6 +243,7 @@ main() {
     update_default_lan_addr
     remove_something_nss_kmod
     remove_affinity_script
+    fix_build_for_openssl
     install_feeds
     install_athena_led
 }
