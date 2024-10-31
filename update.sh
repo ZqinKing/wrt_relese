@@ -221,11 +221,22 @@ remove_affinity_script() {
 fix_build_for_openssl() {
     local makefile="$BUILD_DIR/package/libs/openssl/Makefile"
     
-    if [ -f "$makefile" ]; then
-        sed -i '/^ifndef CONFIG_OPENSSL_SSL3/i CONFIG_OPENSSL_SSL3 := y' "$makefile"
+    if [[ -f "$makefile" ]]; then
+        if ! grep -qP "^CONFIG_OPENSSL_SSL3" "$makefile"; then
+            sed -i '/^ifndef CONFIG_OPENSSL_SSL3/i CONFIG_OPENSSL_SSL3 := y' "$makefile"
+        fi
     fi
 }
 
+update_ath11k_fw() {
+    local makefile="$BUILD_DIR/package/firmware/ath11k-firmware/Makefile"
+    if [[ -f "$makefile" ]]; then
+        local hash=$(sha256sum "$makefile" | awk '{print $1}')
+        if [[ "$hash" == "4a598084f928696e9f029a3de9abddfef0fc4aae53445f858b39792661acd350" ]]; then
+            \cp -f "$BASE_PATH/patches/ath11k_fw.mk" "$makefile"
+        fi
+    fi
+}
 
 main() {
     clone_repo
@@ -244,6 +255,7 @@ main() {
     remove_something_nss_kmod
     remove_affinity_script
     fix_build_for_openssl
+    update_ath11k_fw
     install_feeds
     install_athena_led
 }
