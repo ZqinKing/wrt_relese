@@ -32,14 +32,14 @@ configure_wifi() {
 }
 
 jdc_ax1800_pro_wifi_cfg() {
-    configure_wifi 0 149 HE80 21 'Jdc_1800_PRO_5G' '12345678'
-    configure_wifi 1 1 HE20 22 'Jdc_1800_PRO' '12345678'
+    configure_wifi 0 149 HE80 20 'Jdc_1800_PRO_5G' '12345678'
+    configure_wifi 1 1 HE20 20 'Jdc_1800_PRO' '12345678'
 }
 
 jdc_ax6600_wifi_cfg() {
-    configure_wifi 0 149 HE80 25 'Jdc_AX6600_5G1' '12345678'
-    configure_wifi 1 1 HE20 25 'Jdc_AX6600' '12345678'
-    configure_wifi 2 44 HE160 25 'Jdc_AX6600_5G2' '12345678'
+    configure_wifi 0 149 HE80 20 'Jdc_AX6600_5G1' '12345678'
+    configure_wifi 1 1 HE20 20 'Jdc_AX6600' '12345678'
+    configure_wifi 2 44 HE160 23 'Jdc_AX6600_5G2' '12345678'
 }
 
 case "${board_name}" in
