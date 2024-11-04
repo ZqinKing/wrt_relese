@@ -198,21 +198,6 @@ remove_something_nss_kmod() {
     fi
 }
 
-install_athena_led() {
-    local athena_led_path="$BUILD_DIR/package/emortal/luci-app-athena-led"
-    
-    rm -rf "$athena_led_path"
-    git clone https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_path"
-    
-    if [ -d "$athena_led_path" ]; then
-        sed -i '/gift/d' "$athena_led_path/luasrc/controller/athena_led.lua"
-        
-        find "$athena_led_path/luasrc/view/athena_led" -name "athena_led_gift.htm" -exec rm -f {} +
-        find "$athena_led_path/root/etc/init.d" -name "athena_led" -exec chmod +x {} +
-        find "$athena_led_path/root/usr/sbin" -name "athena-led" -exec chmod +x {} +
-    fi
-}
-
 remove_affinity_script() {
     local affinity_script_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/init.d/set-irq-affinity"
     [ -f "$affinity_script_path" ] && rm -f "$affinity_script_path"
@@ -257,7 +242,6 @@ main() {
     fix_build_for_openssl
     update_ath11k_fw
     install_feeds
-    install_athena_led
 }
 
 main "$@"
