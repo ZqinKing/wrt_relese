@@ -223,6 +223,18 @@ update_ath11k_fw() {
     fi
 }
 
+add_ax6600_led() {
+    local target_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files"
+    local initd_dir="$target_dir/etc/init.d"
+    local sbin_dir="$target_dir/sbin"
+
+    if [ -f "$initd_dir/fix_ax6600_usb" ]; then
+        \cp -f "$BASE_PATH/patches/fix_ax6600_usb" "$initd_dir/fix_ax6600_usb"
+        mkdir -p "$sbin_dir"
+        \cp -f "$BASE_PATH/patches/ax6600_led" "$sbin_dir"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -242,6 +254,7 @@ main() {
     fix_build_for_openssl
     update_ath11k_fw
     install_feeds
+    add_ax6600_led
 }
 
 main "$@"
