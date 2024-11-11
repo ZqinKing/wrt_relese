@@ -228,7 +228,7 @@ add_ax6600_led() {
     local initd_dir="$target_dir/etc/init.d"
     local sbin_dir="$target_dir/sbin"
 
-    if [ -f "$initd_dir/fix_ax6600_usb" ]; then
+    if [ -d "$initd_dir" ]; then
         \cp -f "$BASE_PATH/patches/fix_ax6600_usb" "$initd_dir/fix_ax6600_usb"
         mkdir -p "$sbin_dir"
         \cp -f "$BASE_PATH/patches/ax6600_led" "$sbin_dir"
