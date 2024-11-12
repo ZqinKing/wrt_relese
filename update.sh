@@ -44,10 +44,6 @@ reset_feeds_conf() {
     if [[ $COMMIT_HASH != "none" ]]; then
         git checkout $COMMIT_HASH
     fi
-    #if git status | grep -qE "$FEEDS_CONF$"; then
-    #    git reset HEAD $FEEDS_CONF
-    #    git checkout $FEEDS_CONF
-    #fi
 }
 
 update_feeds() {
@@ -231,7 +227,7 @@ add_ax6600_led() {
     local sbin_dir="$target_dir/sbin"
 
     if [ -d "$initd_dir" ]; then
-        \cp -f "$BASE_PATH/patches/fix_ax6600_usb" "$initd_dir/fix_ax6600_usb"
+        \cp -f "$BASE_PATH/patches/start_screen" "$initd_dir/start_screen"
         mkdir -p "$sbin_dir"
         \cp -f "$BASE_PATH/patches/ax6600_led" "$sbin_dir"
     fi
