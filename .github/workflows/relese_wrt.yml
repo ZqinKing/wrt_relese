@@ -8,10 +8,10 @@ on:
         required: true
         description: Device Model
         type: choice
-        default: jdc_ax1800pro-ax6600_libwrt
+        default: jdc_ipq60xx_libwrt
         options:
           - jdc_ax1800pro-ax6600_ipqwrt
-          - jdc_ax1800pro-ax6600_libwrt
+          - jdc_ipq60xx_libwrt
           - jdc_ax1800pro-ax6600_immwrt
           - rax3000m_immwrt21
           - redmi_ax6000_immwrt21
@@ -20,7 +20,7 @@ on:
         required: true
         description: Runs on...
         type: choice
-        default: ubuntu-20.04
+        default: ubuntu-22.04
         options:
           - ubuntu-20.04
           - ubuntu-22.04
