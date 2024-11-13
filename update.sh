@@ -221,6 +221,30 @@ update_ath11k_fw() {
     fi
 }
 
+fix_mkpkg_format_invalid() {
+    if [ -f $BUILD_DIR/feeds/small8/luci-lib-taskd/Makefile ]; then
+        sed -i 's/>=1\.0\.3-1/>=1\.0\.3-r1/g' $BUILD_DIR/feeds/small8/luci-lib-taskd/Makefile
+    fi
+    if [ -f $BUILD_DIR/feeds/small8/v2ray-geodata/Makefile ]; then
+        sed -i 's/VER)-\$(PKG_RELEASE)/VER)-r\$(PKG_RELEASE)/g' $BUILD_DIR/feeds/small8/v2ray-geodata/Makefile
+    fi
+    if [ -f $BUILD_DIR/feeds/small8/luci-app-openclash/Makefile ]; then
+        sed -i 's/PKG_RELEASE:=beta/PKG_RELEASE:=1/g' $BUILD_DIR/feeds/small8/luci-app-openclash/Makefile
+    fi
+    if [ -f $BUILD_DIR/feeds/small8/luci-app-store/Makefile ]; then
+        sed -i 's/PKG_VERSION:=0\.1\.26-3/PKG_VERSION:=0\.1\.26/g' $BUILD_DIR/feeds/small8/luci-app-store/Makefile
+        sed -i 's/PKG_RELEASE:=$/PKG_RELEASE:=3/g' $BUILD_DIR/feeds/small8/luci-app-store/Makefile
+    fi
+    if [ -f $BUILD_DIR/feeds/small8/luci-app-passwall/Makefile ]; then
+        sed -i 's/PKG_VERSION:=4\.78-4/PKG_VERSION:=4\.78/g' $BUILD_DIR/feeds/small8/luci-app-passwall/Makefile
+        sed -i 's/PKG_RELEASE:=$/PKG_RELEASE:=4/g' $BUILD_DIR/feeds/small8/luci-app-passwall/Makefile
+    fi
+    if [ -f $BUILD_DIR/feeds/small8/luci-app-quickstart/Makefile ]; then
+        sed -i 's/PKG_VERSION:=0\.8\.16-1/PKG_VERSION:=0\.8\.16/g' $BUILD_DIR/feeds/small8/luci-app-quickstart/Makefile
+        sed -i 's/PKG_RELEASE:=$/PKG_RELEASE:=1/g' $BUILD_DIR/feeds/small8/luci-app-quickstart/Makefile
+    fi
+}
+
 add_ax6600_led() {
     local target_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files"
     local initd_dir="$target_dir/etc/init.d"
@@ -251,6 +275,7 @@ main() {
     remove_affinity_script
     fix_build_for_openssl
     update_ath11k_fw
+    fix_mkpkg_format_invalid
     install_feeds
     add_ax6600_led
 }
