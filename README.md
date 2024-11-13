@@ -10,8 +10,8 @@ sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_e
 git clone https://github.com/ZqinKing/wrt_relese.git  
 cd wrt_relese  
   
-编译京东云雅典娜、亚瑟:  
-./build.sh jdc_ax1800pro-ax6600_libwrt  
+编译京东云雅典娜、亚瑟、太乙:  
+./build.sh jdc_ipq60xx_libwrt  
 
 编译红米AX6000:  
 ./build.sh redmi_ax6000_immwrt21  
