@@ -275,7 +275,7 @@ main() {
     remove_affinity_script
     fix_build_for_openssl
     update_ath11k_fw
-    fix_mkpkg_format_invalid
+    # fix_mkpkg_format_invalid
     install_feeds
     add_ax6600_led
 }
