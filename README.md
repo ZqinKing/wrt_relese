@@ -18,3 +18,6 @@ cd wrt_relese
 
 编译京东云百里:   
 ./build.sh jdc_ax6000_imm23
+  
+编译红米AX5:  
+./build.sh redmi_ax5_libwrt  
