@@ -10,7 +10,6 @@ on:
         type: choice
         default: jdc_ipq60xx_libwrt
         options:
-          - jdc_ax1800pro-ax6600_ipqwrt
           - jdc_ipq60xx_libwrt
           - jdc_ax1800pro-ax6600_immwrt
           - rax3000m_immwrt21
