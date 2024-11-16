@@ -49,7 +49,7 @@ reset_feeds_conf() {
 update_feeds() {
     sed -i '/^#/d' $BUILD_DIR/$FEEDS_CONF
     if ! grep -q "small-package" $BUILD_DIR/$FEEDS_CONF; then
-        echo "src-git small8 https://github.com/kenzok8/small-package" >> $BUILD_DIR/$FEEDS_CONF
+        echo "src-git small8 https://github.com/kenzok8/small-package" >>$BUILD_DIR/$FEEDS_CONF
     fi
     ./scripts/feeds clean
     ./scripts/feeds update -a
@@ -203,7 +203,7 @@ remove_affinity_script() {
 
 fix_build_for_openssl() {
     local makefile="$BUILD_DIR/package/libs/openssl/Makefile"
-    
+
     if [[ -f "$makefile" ]]; then
         if ! grep -qP "^CONFIG_OPENSSL_SSL3" "$makefile"; then
             sed -i '/^ifndef CONFIG_OPENSSL_SSL3/i CONFIG_OPENSSL_SSL3 := y' "$makefile"
@@ -275,7 +275,7 @@ main() {
     remove_affinity_script
     fix_build_for_openssl
     update_ath11k_fw
-    # fix_mkpkg_format_invalid
+    fix_mkpkg_format_invalid
     install_feeds
     add_ax6600_led
 }

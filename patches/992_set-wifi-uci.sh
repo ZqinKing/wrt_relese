@@ -43,14 +43,14 @@ jdc_ax6600_wifi_cfg() {
 }
 
 case "${board_name}" in
-    jdcloud,ax1800-pro)
-        jdc_ax1800_pro_wifi_cfg
+jdcloud,ax1800-pro)
+    jdc_ax1800_pro_wifi_cfg
     ;;
-    jdcloud,ax6600)
-        jdc_ax6600_wifi_cfg
+jdcloud,ax6600)
+    jdc_ax6600_wifi_cfg
     ;;
-    *)
-        exit 0
+*)
+    exit 0
     ;;
 esac
 
