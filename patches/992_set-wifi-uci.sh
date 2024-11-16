@@ -32,14 +32,19 @@ configure_wifi() {
 }
 
 jdc_ax1800_pro_wifi_cfg() {
-    configure_wifi 0 149 HE80 20 'Jdc_1800_PRO_5G' '12345678'
-    configure_wifi 1 1 HE20 20 'Jdc_1800_PRO' '12345678'
+    configure_wifi 0 149 HE80 20 'Jdc_AX1800PRO_5G' '12345678'
+    configure_wifi 1 1 HE20 20 'Jdc_AX1800PRO' '12345678'
 }
 
 jdc_ax6600_wifi_cfg() {
-    configure_wifi 0 149 HE80 20 'Jdc_AX6600_5G1' '12345678'
-    configure_wifi 1 1 HE20 20 'Jdc_AX6600' '12345678'
+    configure_wifi 0 149 HE80 22 'Jdc_AX6600_5G1' '12345678'
+    configure_wifi 1 1 HE20 22 'Jdc_AX6600' '12345678'
     configure_wifi 2 44 HE160 23 'Jdc_AX6600_5G2' '12345678'
+}
+
+redmi_ax5_wifi_cfg() {
+    configure_wifi 0 149 HE80 20 'Redmi_AX5_5G' '12345678'
+    configure_wifi 1 1 HE20 20 'Redmi_AX5' '12345678'
 }
 
 case "${board_name}" in
@@ -48,6 +53,9 @@ jdcloud,ax1800-pro)
     ;;
 jdcloud,ax6600)
     jdc_ax6600_wifi_cfg
+    ;;
+redmi,ax5)
+    redmi_ax5_wifi_cfg
     ;;
 *)
     exit 0
