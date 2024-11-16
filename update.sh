@@ -37,20 +37,26 @@ clean_up() {
 }
 
 reset_feeds_conf() {
-    git checkout origin/$REPO_BRANCH
     git reset --hard origin/$REPO_BRANCH
     git clean -f -d
-    git pull origin $REPO_BRANCH
+    git pull
     if [[ $COMMIT_HASH != "none" ]]; then
         git checkout $COMMIT_HASH
     fi
 }
 
 update_feeds() {
-    sed -i '/^#/d' $BUILD_DIR/$FEEDS_CONF
-    if ! grep -q "small-package" $BUILD_DIR/$FEEDS_CONF; then
-        echo "src-git small8 https://github.com/kenzok8/small-package" >>$BUILD_DIR/$FEEDS_CONF
+    # 删除注释行
+    sed -i '/^#/d' "$BUILD_DIR/$FEEDS_CONF"
+
+    # 检查并添加 small-package 源
+    if ! grep -q "small-package" "$BUILD_DIR/$FEEDS_CONF"; then
+        # 确保文件以换行符结尾
+        [ -z "$(tail -c 1 "$BUILD_DIR/$FEEDS_CONF")" ] || echo "" >>"$BUILD_DIR/$FEEDS_CONF"
+        echo "src-git small8 https://github.com/kenzok8/small-package" >>"$BUILD_DIR/$FEEDS_CONF"
     fi
+
+    # 更新 feeds
     ./scripts/feeds clean
     ./scripts/feeds update -a
 }
@@ -275,7 +281,7 @@ main() {
     remove_affinity_script
     fix_build_for_openssl
     update_ath11k_fw
-    fix_mkpkg_format_invalid
+    # fix_mkpkg_format_invalid
     install_feeds
     add_ax6600_led
 }
