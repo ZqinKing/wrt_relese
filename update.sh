@@ -265,7 +265,7 @@ add_ax6600_led() {
 }
 
 chanage_cpuusage() {
-    local luci_dir=$("$BUILD_DIR/feeds/luci/modules/luci-base/root/usr/share/rpcd/ucode/luci")
+    local luci_dir="$BUILD_DIR/feeds/luci/modules/luci-base/root/usr/share/rpcd/ucode/luci"
     if [ -f $luci_dir ]; then
         sed -i "s#const fd = popen('top -n1 | awk \\\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\\'');#const cpuUsageCommand = access('/sbin/cpuusage') ? '/sbin/cpuusage' : \"top -n1 | awk \\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\'\"#g" $luci_dir
         sed -i '/cpuUsageCommand/a \\t\t\tconst fd = popen(cpuUsageCommand);' $luci_dir
