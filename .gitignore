@@ -4,3 +4,4 @@ libwrt/
 test/
 compilecfg/test.ini
 deconfig/test.config
+*.swp
