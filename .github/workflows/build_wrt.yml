@@ -16,6 +16,7 @@ on:
           - redmi_ax6000_immwrt21
           - jdc_ax6000_imm23
           - redmi_ax5_libwrt
+          - zn_m2_libwrt
       runs-on:
         required: true
         description: Runs on...
