@@ -272,6 +272,17 @@ chanage_cpuusage() {
     fi
 }
 
+tcping_support_ipv6() {
+    local tcping_dir="$BUILD_DIR/feeds/small8/tcping/patches"
+    mkdir -p "$tcping_dir"
+
+    local patch_file="$BASE_PATH/patches/0001-Support-ipv6.patch"
+    if [ -f "$patch_file" ]; then
+        、cp -f "$patch_file" "$tcping_dir/"
+    fi
+}
+
+
 main() {
     clone_repo
     clean_up
@@ -292,6 +303,7 @@ main() {
     update_ath11k_fw
     # fix_mkpkg_format_invalid
     chanage_cpuusage
+    tcping_support_ipv6
     install_feeds
     add_ax6600_led
 }
