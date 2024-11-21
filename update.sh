@@ -56,6 +56,11 @@ update_feeds() {
         echo "src-git small8 https://github.com/kenzok8/small-package" >>"$BUILD_DIR/$FEEDS_CONF"
     fi
 
+    # 添加bpf.mk解决更新报错
+    if [ ! -f "$BUILD_DIR/include/bpf.mk" ]; then
+        touch "$BUILD_DIR/include/bpf.mk"
+    fi
+
     # 更新 feeds
     ./scripts/feeds clean
     ./scripts/feeds update -a
@@ -204,7 +209,9 @@ remove_something_nss_kmod() {
 
 remove_affinity_script() {
     local affinity_script_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/init.d/set-irq-affinity"
-    [ -f "$affinity_script_path" ] && rm -f "$affinity_script_path"
+    if [ -d "$(dirname "$affinity_script_path")" ]; then
+        [ -f "$affinity_script_path" ] && \rm -f "$affinity_script_path"
+    fi
 }
 
 fix_build_for_openssl() {
@@ -219,7 +226,7 @@ fix_build_for_openssl() {
 
 update_ath11k_fw() {
     local makefile="$BUILD_DIR/package/firmware/ath11k-firmware/Makefile"
-    if [[ -f "$makefile" ]]; then
+    if [ -d "$(dirname "$makefile")" ] && [ -f "$makefile" ]; then
         local hash=$(sha256sum "$makefile" | awk '{print $1}')
         if [[ "$hash" == "4a598084f928696e9f029a3de9abddfef0fc4aae53445f858b39792661acd350" ]]; then
             \cp -f "$BASE_PATH/patches/ath11k_fw.mk" "$makefile"
@@ -256,7 +263,7 @@ add_ax6600_led() {
     local initd_dir="$target_dir/etc/init.d"
     local sbin_dir="$target_dir/sbin"
 
-    if [ -d "$initd_dir" ]; then
+    if [ -d "$(dirname "$target_dir")" ] && [ -d "$initd_dir" ]; then
         \cp -f "$BASE_PATH/patches/start_screen" "$initd_dir/start_screen"
         mkdir -p "$sbin_dir"
         \cp -f "$BASE_PATH/patches/ax6600_led" "$sbin_dir"
@@ -281,7 +288,6 @@ tcping_support_ipv6() {
         \cp -f "$patch_file" "$tcping_dir/"
     fi
 }
-
 
 main() {
     clone_repo
