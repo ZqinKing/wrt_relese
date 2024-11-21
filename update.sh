@@ -274,13 +274,14 @@ chanage_cpuusage() {
 
 tcping_support_ipv6() {
     local tcping_dir="$BUILD_DIR/feeds/small8/tcping/patches"
-    mkdir -p "$tcping_dir"
-
     local patch_file="$BASE_PATH/patches/0001-Support-ipv6.patch"
-    if [ -f "$patch_file" ]; then
+
+    if [ -d "$BUILD_DIR/feeds/small8/tcping" ] && [ -f "$patch_file" ]; then
+        mkdir -p "$tcping_dir"
         \cp -f "$patch_file" "$tcping_dir/"
     fi
 }
+
 
 main() {
     clone_repo
