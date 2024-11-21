@@ -278,10 +278,9 @@ tcping_support_ipv6() {
 
     local patch_file="$BASE_PATH/patches/0001-Support-ipv6.patch"
     if [ -f "$patch_file" ]; then
-        、cp -f "$patch_file" "$tcping_dir/"
+        \cp -f "$patch_file" "$tcping_dir/"
     fi
 }
-
 
 main() {
     clone_repo
