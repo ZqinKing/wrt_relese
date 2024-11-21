@@ -1,4 +1,5 @@
 #!/bin/sh
+# Copyright (C) 2024 YumesomeZakura <1552037053@qq.com>
 
 cpu_usage=$(top -bn1 | head -n2 | awk -F'[ %]+' 'NR==2{print $2}')
 combined_output=""
