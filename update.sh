@@ -226,11 +226,12 @@ fix_build_for_openssl() {
 
 update_ath11k_fw() {
     local makefile="$BUILD_DIR/package/firmware/ath11k-firmware/Makefile"
+    local new_mk="$BASE_PATH/patches/ath11k_fw.mk"
+    
     if [ -d "$(dirname "$makefile")" ] && [ -f "$makefile" ]; then
-        local hash=$(sha256sum "$makefile" | awk '{print $1}')
-        if [[ "$hash" == "4a598084f928696e9f029a3de9abddfef0fc4aae53445f858b39792661acd350" ]]; then
-            \cp -f "$BASE_PATH/patches/ath11k_fw.mk" "$makefile"
-        fi
+        [ -f "$new_mk" ] && \rm -f "$new_mk"
+        curl -o "$new_mk" https://raw.githubusercontent.com/VIKINGYFY/immortalwrt/refs/heads/main/package/firmware/ath11k-firmware/Makefile
+        \mv -f "$new_mk" "$makefile"
     fi
 }
 
