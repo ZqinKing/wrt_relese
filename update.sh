@@ -289,6 +289,13 @@ update_tcping() {
     fi
 }
 
+add_wg_chk() {
+    local sbin_path="$BUILD_DIR/package/base-files/files/sbin"
+    if [[ -d "$sbin_path" ]]; then
+        install -m 755 -D "$BASE_PATH/patches/wireguard_check.sh" "$sbin_path/wireguard_check.sh"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -310,6 +317,7 @@ main() {
     # fix_mkpkg_format_invalid
     chanage_cpuusage
     update_tcping
+    add_wg_chk
     install_feeds
     add_ax6600_led
 }
