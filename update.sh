@@ -181,7 +181,7 @@ fix_mk_def_depends() {
 
 add_wifi_default_set() {
     if [ -d $BUILD_DIR/package/base-files/files/etc/uci-defaults ]; then
-        \cp -f $BASE_PATH/patches/992_set-wifi-uci.sh $BUILD_DIR/package/base-files/files/etc/uci-defaults
+        install -m 755 -D "$BASE_PATH/patches/992_set-wifi-uci.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_set-wifi-uci.sh"
     fi
 }
 
@@ -227,7 +227,7 @@ fix_build_for_openssl() {
 update_ath11k_fw() {
     local makefile="$BUILD_DIR/package/firmware/ath11k-firmware/Makefile"
     local new_mk="$BASE_PATH/patches/ath11k_fw.mk"
-    
+
     if [ -d "$(dirname "$makefile")" ] && [ -f "$makefile" ]; then
         [ -f "$new_mk" ] && \rm -f "$new_mk"
         curl -o "$new_mk" https://raw.githubusercontent.com/VIKINGYFY/immortalwrt/refs/heads/main/package/firmware/ath11k-firmware/Makefile
@@ -293,6 +293,15 @@ add_wg_chk() {
     local sbin_path="$BUILD_DIR/package/base-files/files/sbin"
     if [[ -d "$sbin_path" ]]; then
         install -m 755 -D "$BASE_PATH/patches/wireguard_check.sh" "$sbin_path/wireguard_check.sh"
+        cat <<'EOF' >$BUILD_DIR/package/base-files/files/etc/uci-defaults/wg-chk-cron
+#!/bin/sh
+set -e
+
+sed -i '/wireguard_check/d' /etc/crontabs/root
+echo "*/3 * * * * /sbin/wireguard_check.sh" >> /etc/crontabs/root
+crontab /etc/crontabs/root
+EOF
+        chmod +x "$BUILD_DIR/package/base-files/files/etc/uci-defaults/wg-chk-cron"
     fi
 }
 
