@@ -265,10 +265,25 @@ add_ax6600_led() {
     local sbin_dir="$target_dir/sbin"
 
     if [ -d "$(dirname "$target_dir")" ] && [ -d "$initd_dir" ]; then
-        \cp -f "$BASE_PATH/patches/start_screen" "$initd_dir/start_screen"
+        cat <<'EOF' >"$initd_dir/start_screen"
+#!/bin/sh /etc/rc.common
+
+START=99
+
+boot() {
+	case $(board_name) in
+	jdcloud,ax6600)
+		ax6600_led >/dev/null 2>&1 &
+		;;
+	esac
+}
+EOF
+
         mkdir -p "$sbin_dir"
-        \cp -f "$BASE_PATH/patches/ax6600_led" "$sbin_dir"
-        \cp -f "$BASE_PATH/patches/cpuusage" "$sbin_dir"
+        install -m 755 -D "$BASE_PATH/patches/ax6600_led" "$sbin_dir/ax6600_led"
+
+        # 临时加一下
+        install -m 755 -D "$BASE_PATH/patches/cpuusage" "$sbin_dir/cpuusage"
     fi
 }
 
@@ -284,24 +299,45 @@ update_tcping() {
     local tcping_path="$BUILD_DIR/feeds/small8/tcping/Makefile"
 
     if [ -d "$(dirname "$tcping_path")" ] && [ -f "$tcping_path" ]; then
-        rm -f "$tcping_path"
+        \rm -f "$tcping_path"
         curl -o "$tcping_path" https://raw.githubusercontent.com/xiaorouji/openwrt-passwall-packages/refs/heads/main/tcping/Makefile
     fi
+}
+
+set_custom_task() {
+    local sh_dir="$BUILD_DIR/package/base-files/files/etc/init.d"
+    cat <<'EOF' >"$sh_dir/custom_task"
+#!/bin/sh /etc/rc.common
+# 设置启动优先级
+START=99
+
+boot() {
+    # 重新添加缓存请求定时任务
+    sed -i '/drop_caches/d' /etc/crontabs/root
+    echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >> /etc/crontabs/root
+
+    # 删除现有的 wireguard_check 任务
+    sed -i '/wireguard_check/d' /etc/crontabs/root
+
+    # 获取 WireGuard 接口名称
+    local wg_ifname=$(wg show | awk '/interface/ {print $2}')
+    
+    if [ -n "$wg_ifname" ]; then
+        # 添加新的 wireguard_check 任务，每3分钟执行一次
+        echo "*/3 * * * * /sbin/wireguard_check.sh" >> /etc/crontabs/root
+    fi
+
+    # 应用新的 crontab 配置
+    crontab /etc/crontabs/root
+}
+EOF
+    chmod +x "$sh_dir/custom_task"
 }
 
 add_wg_chk() {
     local sbin_path="$BUILD_DIR/package/base-files/files/sbin"
     if [[ -d "$sbin_path" ]]; then
         install -m 755 -D "$BASE_PATH/patches/wireguard_check.sh" "$sbin_path/wireguard_check.sh"
-        cat <<'EOF' >$BUILD_DIR/package/base-files/files/etc/uci-defaults/wg-chk-cron
-#!/bin/sh
-set -e
-
-sed -i '/wireguard_check/d' /etc/crontabs/root
-echo "*/3 * * * * /sbin/wireguard_check.sh" >> /etc/crontabs/root
-crontab /etc/crontabs/root
-EOF
-        chmod +x "$BUILD_DIR/package/base-files/files/etc/uci-defaults/wg-chk-cron"
     fi
 }
 
@@ -327,8 +363,9 @@ main() {
     chanage_cpuusage
     update_tcping
     add_wg_chk
-    install_feeds
     add_ax6600_led
+    set_custom_task
+    install_feeds
 }
 
 main "$@"
