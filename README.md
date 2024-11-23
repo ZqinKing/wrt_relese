@@ -11,13 +11,16 @@ git clone https://github.com/ZqinKing/wrt_relese.git
 cd wrt_relese  
   
 编译京东云雅典娜、亚瑟、太乙:  
-./build.sh jdc_ipq60xx_libwrt  
+./build.sh jdcloud_ipq60xx_libwrt  
 
 编译红米AX6000:  
 ./build.sh redmi_ax6000_immwrt21  
 
 编译京东云百里:   
-./build.sh jdc_ax6000_imm23
+./build.sh jdcloud_ax6000_immwrt23
   
 编译红米AX5:  
 ./build.sh redmi_ax5_libwrt  
+
+编译CMCC RAX3000M:  
+./build.sh cmcc_rax3000m_immwrt21  
