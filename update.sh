@@ -271,14 +271,14 @@ add_ax6600_led() {
 START=99
 
 boot() {
-	case $(board_name) in
-	jdcloud,ax6600)
-		ax6600_led >/dev/null 2>&1 &
-		;;
-	esac
+    case $(board_name) in
+    jdcloud,ax6600)
+        ax6600_led >/dev/null 2>&1 &
+        ;;
+    esac
 }
 EOF
-
+        chmod +x "$initd_dir/start_screen"
         mkdir -p "$sbin_dir"
         install -m 755 -D "$BASE_PATH/patches/ax6600_led" "$sbin_dir/ax6600_led"
 
