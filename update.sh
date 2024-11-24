@@ -314,17 +314,17 @@ START=99
 boot() {
     # 重新添加缓存请求定时任务
     sed -i '/drop_caches/d' /etc/crontabs/root
-    echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >> /etc/crontabs/root
+    echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
 
     # 删除现有的 wireguard_check 任务
     sed -i '/wireguard_check/d' /etc/crontabs/root
 
     # 获取 WireGuard 接口名称
     local wg_ifname=$(wg show | awk '/interface/ {print $2}')
-    
+
     if [ -n "$wg_ifname" ]; then
         # 添加新的 wireguard_check 任务，每3分钟执行一次
-        echo "*/3 * * * * /sbin/wireguard_check.sh" >> /etc/crontabs/root
+        echo "*/3 * * * * /sbin/wireguard_check.sh >/dev/null 2>&1" >>/etc/crontabs/root
     fi
 
     # 应用新的 crontab 配置
