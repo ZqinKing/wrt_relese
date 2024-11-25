@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 
 set -e
+set -o errexit
+set -o errtrace
+
+# 定义错误处理函数
+error_handler() {
+    echo "Error occurred in script at line: ${BASH_LINENO[0]}, command: '${BASH_COMMAND}'"
+}
+
+# 设置trap捕获ERR信号
+trap 'error_handler' ERR
 
 source /etc/profile
 BASE_PATH=$(cd $(dirname $0) && pwd)
@@ -209,8 +219,8 @@ remove_something_nss_kmod() {
 
 remove_affinity_script() {
     local affinity_script_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/init.d/set-irq-affinity"
-    if [ -d "$(dirname "$affinity_script_path")" ]; then
-        [ -f "$affinity_script_path" ] && \rm -f "$affinity_script_path"
+    if [ -f "$affinity_script_path" ]; then
+        \rm -f "$affinity_script_path"
     fi
 }
 
