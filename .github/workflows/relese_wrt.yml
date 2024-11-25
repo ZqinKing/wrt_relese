@@ -11,7 +11,8 @@ on:
         default: jdcloud_ipq60xx_libwrt
         options:
           - jdcloud_ipq60xx_libwrt
-          - jdcloud_ax1800pro-ax6600_immwrt
+          - jdcloud_ipq60xx_immwrt
+          - jdcloud_ipq60xx_lede
           - cmcc_rax3000m_immwrt21
           - redmi_ax6000_immwrt21
           - jdcloud_ax6000_immwrt23
