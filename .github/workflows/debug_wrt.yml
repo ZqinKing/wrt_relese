@@ -1,4 +1,4 @@
-name: Build WRT
+name: Debug WRT
 run-name: Build - ${{ inputs.model }}
 
 on:
