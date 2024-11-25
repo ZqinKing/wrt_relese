@@ -190,8 +190,13 @@ fix_mk_def_depends() {
 }
 
 add_wifi_default_set() {
-    if [ -d $BUILD_DIR/package/base-files/files/etc/uci-defaults ]; then
-        install -m 755 -D "$BASE_PATH/patches/992_set-wifi-uci.sh" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_set-wifi-uci.sh"
+    local uci_dir="$BUILD_DIR/package/base-files/files/etc/uci-defaults"
+    local ipq_uci_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/uci-defaults"
+    if [ -f "$uci_dir/990_set-wireless.sh" ]; then
+        \rm -f "$uci_dir/990_set-wireless.sh"
+    fi
+    if [ -d "$ipq_uci_dir" ]; then
+        install -m 755 -D "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq_uci_dir/992_set-wifi-uci.sh"
     fi
 }
 
@@ -299,9 +304,20 @@ EOF
 
 chanage_cpuusage() {
     local luci_dir="$BUILD_DIR/feeds/luci/modules/luci-base/root/usr/share/rpcd/ucode/luci"
+    local imm_script1="$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_luci-NSS-Load.sh"
+    local imm_script2="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/sbin/cpuusage"
+
     if [ -f $luci_dir ]; then
         sed -i "s#const fd = popen('top -n1 | awk \\\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\\'')#const cpuUsageCommand = access('/sbin/cpuusage') ? '/sbin/cpuusage' : \"top -n1 | awk \\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\'\"#g" $luci_dir
         sed -i '/cpuUsageCommand/a \\t\t\tconst fd = popen(cpuUsageCommand);' $luci_dir
+    fi
+
+    if [ -f "$imm_script1" ]; then
+        \rm -f "$imm_script1"
+    fi
+
+    if [ -f "$imm_script2" ]; then
+        \rm -f "$imm_script2"
     fi
 }
 
