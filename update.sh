@@ -245,7 +245,7 @@ update_ath11k_fw() {
 
     if [ -d "$(dirname "$makefile")" ] && [ -f "$makefile" ]; then
         [ -f "$new_mk" ] && \rm -f "$new_mk"
-        curl -o "$new_mk" https://raw.githubusercontent.com/VIKINGYFY/immortalwrt/refs/heads/main/package/firmware/ath11k-firmware/Makefile
+        curl -L -o "$new_mk" https://raw.githubusercontent.com/VIKINGYFY/immortalwrt/refs/heads/main/package/firmware/ath11k-firmware/Makefile
         \mv -f "$new_mk" "$makefile"
     fi
 }
@@ -264,6 +264,10 @@ fix_mkpkg_format_invalid() {
         if [ -f $BUILD_DIR/feeds/small8/luci-app-quickstart/Makefile ]; then
             sed -i 's/PKG_VERSION:=0\.8\.16-1/PKG_VERSION:=0\.8\.16/g' $BUILD_DIR/feeds/small8/luci-app-quickstart/Makefile
             sed -i 's/PKG_RELEASE:=$/PKG_RELEASE:=1/g' $BUILD_DIR/feeds/small8/luci-app-quickstart/Makefile
+        fi
+        if [ -f $BUILD_DIR/feeds/small8/luci-app-store/Makefile ]; then
+            sed -i 's/PKG_VERSION:=0\.1\.27-1/PKG_VERSION:=0\.1\.27/g' $BUILD_DIR/feeds/small8/luci-app-store/Makefile
+            sed -i 's/PKG_RELEASE:=$/PKG_RELEASE:=1/g' $BUILD_DIR/feeds/small8/luci-app-store/Makefile
         fi
     fi
 }
@@ -320,7 +324,7 @@ update_tcping() {
 
     if [ -d "$(dirname "$tcping_path")" ] && [ -f "$tcping_path" ]; then
         \rm -f "$tcping_path"
-        curl -o "$tcping_path" https://raw.githubusercontent.com/xiaorouji/openwrt-passwall-packages/refs/heads/main/tcping/Makefile
+        curl -L -o "$tcping_path" https://raw.githubusercontent.com/xiaorouji/openwrt-passwall-packages/refs/heads/main/tcping/Makefile
     fi
 }
 
