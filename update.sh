@@ -371,12 +371,17 @@ add_wg_chk() {
 update_pw_ha_chk() {
     local pw_ha_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/haproxy_check.sh"
     local new_path="$BASE_PATH/patches/haproxy_check.sh"
+    local ha_lua_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/haproxy.lua"
 
     if [ -f "$pw_ha_path" ]; then
         rm -f "$pw_ha_path"
     fi
 
     install -m 755 -D "$new_path" "$pw_ha_path"
+
+    if [ -f $ha_lua_path ]; then
+        sed -i 's/rise 1 fall 3/rise 3 fall 2/g' "$ha_lua_path"
+    fi
 }
 
 main() {
