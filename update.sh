@@ -368,6 +368,17 @@ add_wg_chk() {
     fi
 }
 
+update_pw_ha_chk() {
+    local pw_ha_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/haproxy_check.sh"
+    local new_path="$BASE_PATH/patches/haproxy_check.sh"
+
+    if [ -f "$pw_ha_path" ]; then
+        rm -f "$pw_ha_path"
+    fi
+
+    install -m 755 -D "$new_path" "$pw_ha_path"
+}
+
 main() {
     clone_repo
     clean_up
@@ -392,6 +403,7 @@ main() {
     add_wg_chk
     add_ax6600_led
     set_custom_task
+    update_pw_ha_chk
     install_feeds
 }
 
