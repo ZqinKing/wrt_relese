@@ -348,7 +348,7 @@ boot() {
 
     if [ -n "$wg_ifname" ]; then
         # 添加新的 wireguard_check 任务，每3分钟执行一次
-        echo "*/3 * * * * /sbin/wireguard_check.sh" >>/etc/crontabs/root
+        echo "*/10 * * * * /sbin/wireguard_check.sh" >>/etc/crontabs/root
         uci set system.@system[0].cronloglevel='9'
         uci commit system
         /etc/init.d/cron restart
