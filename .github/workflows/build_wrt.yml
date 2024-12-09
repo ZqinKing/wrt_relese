@@ -18,6 +18,7 @@ on:
           - jdcloud_ax6000_immwrt23
           - redmi_ax5_libwrt
           - zn_m2_libwrt
+          - x64_immwrt
       runs-on:
         required: true
         description: Runs on...
