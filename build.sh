@@ -46,7 +46,7 @@ fi
 
 TARGET_DIR="$BASE_PATH/$BUILD_DIR/bin/targets"
 if [[ -d $TARGET_DIR ]]; then
-    find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" \) -exec rm -f {} +
+    find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*.img.gz" \) -exec rm -f {} +
 fi
 
 make download -j$(nproc)
