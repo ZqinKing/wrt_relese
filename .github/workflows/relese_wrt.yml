@@ -101,7 +101,7 @@ jobs:
         echo "$(grep -oP "luci-app-[a-zA-Z0-9]{1,30}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
 
     - name: Release Firmware
-      uses: softprops/action-gh-release@master
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
         files: ./firmware/*.*
