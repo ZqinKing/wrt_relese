@@ -299,7 +299,8 @@ START=99
 
 boot() {
     case $(board_name) in
-    jdcloud,ax6600)
+    jdcloud,ax6600|\
+    jdcloud,re-cs-02)
         ax6600_led >/dev/null 2>&1 &
         ;;
     esac
