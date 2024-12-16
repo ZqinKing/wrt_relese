@@ -16,8 +16,8 @@ fi
 
 status=$(/usr/bin/curl -I -o /dev/null -skL -x socks5h://${server_address}:${server_port} --connect-timeout 1 --retry 1 -w %{http_code} "${probeUrl}")
 case "$status" in
-204 | \
-    200)
+204|\
+200)
     status=200
     ;;
 esac
