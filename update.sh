@@ -209,6 +209,7 @@ update_default_lan_addr() {
 
 remove_something_nss_kmod() {
     local ipq_target_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/target.mk"
+    local ipq_mk_path="$BUILD_DIR/target/linux/qualcommax/Makefile"
     if [ -f $ipq_target_path ]; then
         sed -i 's/kmod-qca-nss-drv-eogremgr//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-drv-gre//g' $ipq_target_path
@@ -219,6 +220,19 @@ remove_something_nss_kmod() {
         sed -i 's/kmod-qca-nss-drv-tunipip6//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-macsec//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-drv-match//g' $ipq_target_path
+    fi
+
+    if [ -f $ipq_mk_path ]; then
+        sed -i '/kmod-qca-nss-drv-eogremgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-gre/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-pvxlanmgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-vxlanmgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-mirror/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-tun6rd/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-tunipip6/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-macsec/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-match/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-wifi-meshmgr/d' $ipq_mk_path
     fi
 }
 
@@ -302,8 +316,8 @@ EOF
 
 chanage_cpuusage() {
     local luci_dir="$BUILD_DIR/feeds/luci/modules/luci-base/root/usr/share/rpcd/ucode/luci"
-    local imm_script1="$BUILD_DIR/package/base-files/files/etc/uci-defaults/992_luci-NSS-Load.sh"
-    local imm_script2="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/sbin/cpuusage"
+    local imm_script1="$BUILD_DIR/package/base-files/files/etc/uci-defaults/993_set-nss-load.sh"
+    local imm_script2="$BUILD_DIR/package/base-files/files/sbin/cpuusage"
 
     if [ -f $luci_dir ]; then
         sed -i "s#const fd = popen('top -n1 | awk \\\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\\'')#const cpuUsageCommand = access('/sbin/cpuusage') ? '/sbin/cpuusage' : 'top -n1 | awk \\\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\\''#g" $luci_dir
@@ -317,6 +331,9 @@ chanage_cpuusage() {
     if [ -f "$imm_script2" ]; then
         \rm -f "$imm_script2"
     fi
+
+    # 临时放一下，清理脚本
+    find $BUILD_DIR/package/base-files/files/etc/uci-defaults/ -type f -name "9*.sh" -exec rm -f {} +
 }
 
 update_tcping() {
