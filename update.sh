@@ -406,6 +406,15 @@ update_pw_ha_chk() {
     fi
 }
 
+install_opkg_distfeeds() {
+    local emortal_def_dir="$BUILD_DIR/package/emortal/default-settings/files"
+    local distfeeds_conf="$emortal_def_dir/99-distfeeds.conf"
+
+    if [ -d "$emortal_def_dir" ] && [ ! -f "$distfeeds_conf" ]; then
+        install -m 755 -D "$BASE_PATH/patches/99-distfeeds.conf" "$distfeeds_conf"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -431,6 +440,7 @@ main() {
     add_ax6600_led
     set_custom_task
     update_pw_ha_chk
+    install_opkg_distfeeds
     install_feeds
 }
 
