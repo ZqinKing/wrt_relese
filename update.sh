@@ -291,6 +291,7 @@ add_ax6600_led() {
     local target_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files"
     local initd_dir="$target_dir/etc/init.d"
     local sbin_dir="$target_dir/sbin"
+    local athena_led_dir="$BUILD_DIR/package/emortal/luci-app-athena-led"
 
     if [ -d "$(dirname "$target_dir")" ] && [ -d "$initd_dir" ]; then
         cat <<'EOF' >"$initd_dir/start_screen"
@@ -314,6 +315,8 @@ EOF
         # 临时加一下
         install -m 755 -D "$BASE_PATH/patches/cpuusage" "$sbin_dir/cpuusage"
     fi
+
+    \rm -rf $athena_led_dir 2>/dev/null
 }
 
 chanage_cpuusage() {
