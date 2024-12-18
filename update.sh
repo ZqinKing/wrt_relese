@@ -420,10 +420,18 @@ install_opkg_distfeeds() {
         sed -i "/define Package\/default-settings\/install/a\\
 \\t\$(INSTALL_DIR) \$(1)/etc\\n\
 \t\$(INSTALL_DATA) ./files/99-distfeeds.conf \$(1)/etc/99-distfeeds.conf\n" $emortal_def_dir/Makefile
-        
+
         sed -i "/exit 0/i\\
 [ -f \'/etc/99-distfeeds.conf\' ] && mv \'/etc/99-distfeeds.conf\' \'/etc/opkg/distfeeds.conf\'\n\
 sed -ri \'/check_signature/s@^[^#]@#&@\' /etc/opkg.conf\n" $emortal_def_dir/files/99-default-settings
+    fi
+}
+
+update_nss_pbuf_performance() {
+    local pbuf_path="$BUILD_DIR/package/kernel/mac80211/files/pbuf.uci"
+    if [ -d "$(dirname "$pbuf_path")" ] && [ -f $pbuf_path ]; then
+        sed -i "s/auto_scale '1'/auto_scale 'off'/g" $pbuf_path
+        sed -i "s/scaling_governor 'schedutil'/scaling_governor 'performance'/g" $pbuf_path
     fi
 }
 
@@ -453,6 +461,7 @@ main() {
     set_custom_task
     update_pw_ha_chk
     install_opkg_distfeeds
+    update_nss_pbuf_performance
     install_feeds
 }
 
