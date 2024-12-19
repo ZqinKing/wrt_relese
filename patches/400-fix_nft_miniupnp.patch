@@ -1,8 +1,6 @@
-diff --git a/getifaddr.c b/getifaddr.c
-index 76a582c..f8f93d8 100644
 --- a/getifaddr.c
 +++ b/getifaddr.c
-@@ -313,13 +313,13 @@ static const struct { uint32_t address; uint32_t rmask; } reserved[] = {
+@@ -313,13 +313,13 @@ static const struct { uint32_t address;
  int
  addr_is_reserved(struct in_addr * addr)
  {
@@ -18,11 +16,9 @@ index 76a582c..f8f93d8 100644
  
  	return 0;
  }
-diff --git a/miniupnpd.c b/miniupnpd.c
-index 2cb283f..f64e605 100644
 --- a/miniupnpd.c
 +++ b/miniupnpd.c
-@@ -962,7 +962,7 @@ parselanaddr(struct lan_addr_s * lan_addr, const char * str, int debug_flag)
+@@ -962,7 +962,7 @@ parselanaddr(struct lan_addr_s * lan_add
  		if(!inet_aton(lan_addr->str, &lan_addr->addr))
  			goto parselan_error;
  	}
@@ -31,11 +27,9 @@ index 2cb283f..f64e605 100644
  		INIT_PRINT_ERR("Error: LAN address contains public IP address : %s\n", lan_addr->str);
  		INIT_PRINT_ERR("Public IP address can be configured via ext_ip= option\n");
  		INIT_PRINT_ERR("LAN address should contain private address, e.g. from 192.168. block\n");
-diff --git a/upnpredirect.c b/upnpredirect.c
-index e9d1c82..6bebc11 100644
 --- a/upnpredirect.c
 +++ b/upnpredirect.c
-@@ -444,7 +444,7 @@ upnp_redirect_internal(const char * rhost, unsigned short eport,
+@@ -444,7 +444,7 @@ upnp_redirect_internal(const char * rhos
  {
  	/*syslog(LOG_INFO, "redirecting port %hu to %s:%hu protocol %s for: %s",
  		eport, iaddr, iport, protocol, desc);			*/
@@ -44,8 +38,6 @@ index e9d1c82..6bebc11 100644
  		return -1;
  	if(add_redirect_rule2(ext_if_name, rhost, eport, iaddr, iport, proto,
  	                      desc, timestamp) < 0) {
-diff --git a/netfilter_nft/nftnlrdr_misc.c b/netfilter_nft/nftnlrdr_misc.c
-index a4de26e..ddc4137 100644
 --- a/netfilter_nft/nftnlrdr_misc.c
 +++ b/netfilter_nft/nftnlrdr_misc.c
 @@ -1,4 +1,4 @@
@@ -54,7 +46,7 @@ index a4de26e..ddc4137 100644
  /* vim: tabstop=4 shiftwidth=4 noexpandtab
   * MiniUPnP project
   * http://miniupnp.free.fr/ or https://miniupnp.tuxfamily.org/
-@@ -283,6 +283,9 @@ parse_rule_nat(struct nftnl_expr *e, rule_t *r)
+@@ -283,6 +283,9 @@ parse_rule_nat(struct nftnl_expr *e, rul
  	r->family = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_FAMILY);
  	addr_min_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_ADDR_MIN);
  	addr_max_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_ADDR_MAX);
@@ -64,7 +56,7 @@ index a4de26e..ddc4137 100644
  	proto_min_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_PROTO_MIN);
  	proto_max_reg = nftnl_expr_get_u32(e, NFTNL_EXPR_NAT_REG_PROTO_MAX);
  
-@@ -300,10 +303,10 @@ parse_rule_nat(struct nftnl_expr *e, rule_t *r)
+@@ -300,10 +303,10 @@ parse_rule_nat(struct nftnl_expr *e, rul
  	}
  	reg_val_ptr = get_reg_val_ptr(r, addr_min_reg);
  	if (reg_val_ptr != NULL) {
