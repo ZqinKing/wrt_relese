@@ -213,27 +213,28 @@ remove_something_nss_kmod() {
     if [ -f $ipq_target_path ]; then
         sed -i 's/kmod-qca-nss-drv-eogremgr//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-drv-gre//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-pvxlanmgr//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-vxlanmgr//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-map-t//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-match//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-drv-mirror//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-pvxlanmgr//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-drv-tun6rd//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-drv-tunipip6//g' $ipq_target_path
+        sed -i 's/kmod-qca-nss-drv-vxlanmgr//g' $ipq_target_path
         sed -i 's/kmod-qca-nss-macsec//g' $ipq_target_path
-        sed -i 's/kmod-qca-nss-drv-match//g' $ipq_target_path
     fi
 
     if [ -f $ipq_mk_path ]; then
         sed -i '/kmod-qca-nss-crypto/d' $ipq_mk_path
         sed -i '/kmod-qca-nss-drv-eogremgr/d' $ipq_mk_path
         sed -i '/kmod-qca-nss-drv-gre/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-pvxlanmgr/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-vxlanmgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-map-t/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-match/d' $ipq_mk_path
         sed -i '/kmod-qca-nss-drv-mirror/d' $ipq_mk_path
         sed -i '/kmod-qca-nss-drv-tun6rd/d' $ipq_mk_path
         sed -i '/kmod-qca-nss-drv-tunipip6/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-macsec/d' $ipq_mk_path
-        sed -i '/kmod-qca-nss-drv-match/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-drv-vxlanmgr/d' $ipq_mk_path
         sed -i '/kmod-qca-nss-drv-wifi-meshmgr/d' $ipq_mk_path
+        sed -i '/kmod-qca-nss-macsec/d' $ipq_mk_path
     fi
 }
 
@@ -369,7 +370,7 @@ boot() {
     local wg_ifname=$(wg show | awk '/interface/ {print $2}')
 
     if [ -n "$wg_ifname" ]; then
-        # 添加新的 wireguard_check 任务，每3分钟执行一次
+        # 添加新的 wireguard_check 任务，每10分钟执行一次
         echo "*/10 * * * * /sbin/wireguard_check.sh" >>/etc/crontabs/root
         uci set system.@system[0].cronloglevel='9'
         uci commit system
