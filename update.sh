@@ -148,8 +148,10 @@ fix_default_set() {
     #修改默认主题
     sed -i "s/luci-theme-bootstrap/luci-theme-$THEME_SET/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 
-    if [[ -f ./package/emortal/autocore/files/tempinfo ]]; then
-        if [[ -f $BASE_PATH/patches/tempinfo ]]; then
+    install -m 755 -D "$BASE_PATH/patches/99_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
+
+    if [ -f $BUILD_DIR/package/emortal/autocore/files/tempinfo ]; then
+        if [ -f $BASE_PATH/patches/tempinfo ]; then
             \cp -f $BASE_PATH/patches/tempinfo ./package/emortal/autocore/files/tempinfo
         fi
     fi
