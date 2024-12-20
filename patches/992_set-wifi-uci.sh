@@ -56,7 +56,8 @@ jdcloud,ax6600|\
 jdcloud,re-cs-02)
     jdc_ax6600_wifi_cfg
     ;;
-redmi,ax5)
+redmi,ax5|\
+redmi,ax5-jdcloud)
     redmi_ax5_wifi_cfg
     ;;
 *)
