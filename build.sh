@@ -39,13 +39,17 @@ $BASE_PATH/update.sh "$REPO_URL" "$REPO_BRANCH" "$BASE_PATH/$BUILD_DIR" "$COMMIT
 if [[ -d "$BASE_PATH/build_cache" ]]; then
     # 检查目录是否为空
     if [ -n "$(ls -A "$BASE_PATH/build_cache")" ]; then
-        mkdir -p "$BASE_PATH/$BUILD_DIR/staging_dir/"
-        if [ -d "$BASE_PATH/$BUILD_DIR/staging_dir/host" ]; then
-            \rm -rf "$BASE_PATH/$BUILD_DIR/staging_dir/host"
+        if [ -d "$BASE_PATH/build_cache/staging_dir" ]; then
+            mkdir -p "$BASE_PATH/$BUILD_DIR/staging_dir/"
+            rsync -a --delete "$BASE_PATH/build_cache/staging_dir/" "$BASE_PATH/$BUILD_DIR/staging_dir/"
         fi
-        \mv -f "$BASE_PATH/build_cache/"* "$BASE_PATH/$BUILD_DIR/staging_dir/"
+        if [ -d "$BASE_PATH/build_cache/build_dir" ]; then
+            mkdir -p "$BASE_PATH/$BUILD_DIR/build_dir/"
+            rsync -a --delete "$BASE_PATH/build_cache/build_dir/" "$BASE_PATH/$BUILD_DIR/build_dir/"
+        fi
         echo "user build caching"
     fi
+    \rm -rf $BASE_PATH/build_cache/*
 fi
 
 \cp -f "$CONFIG_FILE" "$BASE_PATH/$BUILD_DIR/.config"
@@ -72,8 +76,13 @@ find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi
 \rm -f "$BASE_PATH/firmware/Packages.manifest" 2>/dev/null
 
 # Clean up build cache
-if [[ -d $BASE_PATH/build_cache ]]; then
+if [[ -d "$BASE_PATH/build_cache" ]]; then
     echo "copy build cache"
     make clean
-    \mv -f "$BASE_PATH/$BUILD_DIR/staging_dir/"* "$BASE_PATH/build_cache"
+    mkdir -p "$BASE_PATH/build_cache/staging_dir"
+    rsync -a --delete "$BASE_PATH/$BUILD_DIR/staging_dir/" "$BASE_PATH/build_cache/staging_dir/"
+    \rm -rf $BASE_PATH/$BUILD_DIR/staging_dir/*
+    mkdir -p "$BASE_PATH/build_cache/build_dir"
+    rsync -a --delete "$BASE_PATH/$BUILD_DIR/build_dir/" "$BASE_PATH/build_cache/build_dir/"
+    \rm -rf $BASE_PATH/$BUILD_DIR/build_dir/*
 fi
