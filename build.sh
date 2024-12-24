@@ -35,15 +35,6 @@ COMMIT_HASH=${COMMIT_HASH:-none}
 
 $BASE_PATH/update.sh "$REPO_URL" "$REPO_BRANCH" "$BASE_PATH/$BUILD_DIR" "$COMMIT_HASH"
 
-\cp -f "$CONFIG_FILE" "$BASE_PATH/$BUILD_DIR/.config"
-
-cd "$BASE_PATH/$BUILD_DIR"
-make defconfig
-
-if [[ $Build_Mod == "debug" ]]; then
-    exit 0
-fi
-
 # Handle build cache
 if [[ -d "$BASE_PATH/build_cache" ]]; then
     # 检查目录是否为空
@@ -55,6 +46,15 @@ if [[ -d "$BASE_PATH/build_cache" ]]; then
         \mv -f "$BASE_PATH/build_cache/"* "$BASE_PATH/$BUILD_DIR/staging_dir/"
         echo "user build caching"
     fi
+fi
+
+\cp -f "$CONFIG_FILE" "$BASE_PATH/$BUILD_DIR/.config"
+
+cd "$BASE_PATH/$BUILD_DIR"
+make defconfig
+
+if [[ $Build_Mod == "debug" ]]; then
+    exit 0
 fi
 
 TARGET_DIR="$BASE_PATH/$BUILD_DIR/bin/targets"
