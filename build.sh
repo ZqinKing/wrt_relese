@@ -53,6 +53,7 @@ if [[ -d "$BASE_PATH/build_cache" ]]; then
             \rm -rf "$BASE_PATH/$BUILD_DIR/staging_dir/host"
         fi
         \mv -f "$BASE_PATH/build_cache/"* "$BASE_PATH/$BUILD_DIR/staging_dir/"
+        echo "user build caching"
     fi
 fi
 
