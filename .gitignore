@@ -1,3 +1,4 @@
+build_cache/
 firmware/
 .pc/
 libwrt/
