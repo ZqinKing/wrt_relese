@@ -79,11 +79,16 @@ find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi
 if [[ -d "$BASE_PATH/build_cache" ]]; then
     echo "copy build cache"
     make clean
+    # 清理dl节约空间
     \rm -rf "$BASE_PATH/$BUILD_DIR/dl/"
-    mkdir -p "$BASE_PATH/build_cache/staging_dir"
-    rsync -a --delete "$BASE_PATH/$BUILD_DIR/staging_dir/" "$BASE_PATH/build_cache/staging_dir/"
-    \rm -rf $BASE_PATH/$BUILD_DIR/staging_dir/*
+
+    # 备份build_dir
     mkdir -p "$BASE_PATH/build_cache/build_dir"
     rsync -a --delete "$BASE_PATH/$BUILD_DIR/build_dir/" "$BASE_PATH/build_cache/build_dir/"
     \rm -rf $BASE_PATH/$BUILD_DIR/build_dir/*
+
+    # staging_dir
+    mkdir -p "$BASE_PATH/build_cache/staging_dir"
+    rsync -a --delete "$BASE_PATH/$BUILD_DIR/staging_dir/" "$BASE_PATH/build_cache/staging_dir/"
+    \rm -rf $BASE_PATH/$BUILD_DIR/staging_dir/*
 fi
