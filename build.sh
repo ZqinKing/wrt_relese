@@ -44,6 +44,12 @@ if [[ $Build_Mod == "debug" ]]; then
     exit 0
 fi
 
+# Handle build cache
+if [[ -f $BASE_PATH/build_cache ]]; then
+    mkdir -p "$BASE_PATH/$BUILD_DIR/staging_dir/"
+    \mv -f "$BASE_PATH/build_cache/"* "$BASE_PATH/$BUILD_DIR/staging_dir/"
+fi
+
 TARGET_DIR="$BASE_PATH/$BUILD_DIR/bin/targets"
 if [[ -d $TARGET_DIR ]]; then
     find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" \) -exec rm -f {} +
@@ -57,3 +63,9 @@ FIRMWARE_DIR="$BASE_PATH/firmware"
 mkdir -p "$FIRMWARE_DIR"
 find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" \) -exec cp -f {} "$FIRMWARE_DIR/" \;
 \rm -f "$BASE_PATH/firmware/Packages.manifest" 2>/dev/null
+
+# Clean up build cache
+if [[ -f $BASE_PATH/build_cache ]]; then
+    make clean
+    \mv -f "$BASE_PATH/$BUILD_DIR/staging_dir/"* "$BASE_PATH/build_cache"
+fi
