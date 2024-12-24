@@ -79,6 +79,7 @@ find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi
 if [[ -d "$BASE_PATH/build_cache" ]]; then
     echo "copy build cache"
     make clean
+    \rm -rf "$BASE_PATH/$BUILD_DIR/dl/"
     mkdir -p "$BASE_PATH/build_cache/staging_dir"
     rsync -a --delete "$BASE_PATH/$BUILD_DIR/staging_dir/" "$BASE_PATH/build_cache/staging_dir/"
     \rm -rf $BASE_PATH/$BUILD_DIR/staging_dir/*
