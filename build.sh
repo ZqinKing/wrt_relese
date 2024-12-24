@@ -45,9 +45,15 @@ if [[ $Build_Mod == "debug" ]]; then
 fi
 
 # Handle build cache
-if [[ -f $BASE_PATH/build_cache ]]; then
-    mkdir -p "$BASE_PATH/$BUILD_DIR/staging_dir/"
-    \mv -f "$BASE_PATH/build_cache/"* "$BASE_PATH/$BUILD_DIR/staging_dir/"
+if [[ -d "$BASE_PATH/build_cache" ]]; then
+    # 检查目录是否为空
+    if [ -n "$(ls -A "$BASE_PATH/build_cache")" ]; then
+        mkdir -p "$BASE_PATH/$BUILD_DIR/staging_dir/"
+        if [ -d "$BASE_PATH/$BUILD_DIR/staging_dir/host" ]; then
+            \rm -rf "$BASE_PATH/$BUILD_DIR/staging_dir/host"
+        fi
+        \mv -f "$BASE_PATH/build_cache/"* "$BASE_PATH/$BUILD_DIR/staging_dir/"
+    fi
 fi
 
 TARGET_DIR="$BASE_PATH/$BUILD_DIR/bin/targets"
@@ -65,7 +71,8 @@ find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi
 \rm -f "$BASE_PATH/firmware/Packages.manifest" 2>/dev/null
 
 # Clean up build cache
-if [[ -f $BASE_PATH/build_cache ]]; then
+if [[ -d $BASE_PATH/build_cache ]]; then
+    echo "copy build cache"
     make clean
     \mv -f "$BASE_PATH/$BUILD_DIR/staging_dir/"* "$BASE_PATH/build_cache"
 fi
