@@ -85,7 +85,7 @@ jobs:
         path: ./build_cache
         key: ${{ inputs.runs-on }}-build-${{ env.BUILD_DATE }}
         restore-keys: |
-          ${{ runner.os }}-build-
+          ${{ inputs.runs-on }}-build-
 
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
