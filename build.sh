@@ -61,3 +61,7 @@ FIRMWARE_DIR="$BASE_PATH/firmware"
 mkdir -p "$FIRMWARE_DIR"
 find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" \) -exec cp -f {} "$FIRMWARE_DIR/" \;
 \rm -f "$BASE_PATH/firmware/Packages.manifest" 2>/dev/null
+
+if [[ -d $BASE_PATH/action_build ]]; then
+    make clean
+fi
