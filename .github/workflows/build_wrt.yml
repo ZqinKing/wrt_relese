@@ -84,9 +84,7 @@ jobs:
     - name: Cache Dependencies
       uses: actions/cache@v4
       with:
-        path: |
-          ./action_build/build_dir
-          ./action_build/staging_dir
+        path: ./action_build/staging_dir
         key: ${{ inputs.runs-on }}-build-${{ env.BUILD_DATE }}
         restore-keys: |
           ${{ inputs.runs-on }}-build-
