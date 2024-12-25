@@ -44,6 +44,15 @@ clean_up() {
     if [[ -d $BUILD_DIR/logs ]]; then
         \rm -rf $BUILD_DIR/logs/*
     fi
+    mkdir -p $BUILD_DIR/tmp
+    echo "1" >$BUILD_DIR/tmp/.build
+}
+
+update_stamp_time() {
+    # 使用 find 命令查找目录并排除包含 "target" 字符串的目录
+    find "$BUILD_DIR/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r dir; do
+        find "$dir" -type f -exec touch {} +
+    done
 }
 
 reset_feeds_conf() {
@@ -441,6 +450,7 @@ update_nss_pbuf_performance() {
 main() {
     clone_repo
     clean_up
+    update_stamp_time
     reset_feeds_conf
     update_feeds
     remove_unwanted_packages

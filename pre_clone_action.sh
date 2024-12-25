@@ -33,5 +33,4 @@ BUILD_DIR="$BASE_PATH/action_build"
 echo $REPO_URL $REPO_BRANCH
 git clone --depth 1 -b $REPO_BRANCH $REPO_URL $BUILD_DIR
 
-mkdir -p "$BUILD_DIR/build_dir"
 mkdir -p "$BUILD_DIR/staging_dir"
