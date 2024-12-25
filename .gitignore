@@ -3,6 +3,12 @@ firmware/
 .pc/
 libwrt/
 test/
+imm-798x-23/
+imm-mt798x/
+imm-nss/
+imm-x64/
+lede/
+libwrt-k612/
 compilecfg/test.ini
 deconfig/test.config
 *.swp

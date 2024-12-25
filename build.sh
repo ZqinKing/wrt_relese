@@ -64,4 +64,4 @@ find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi
 
 if [[ -d $BASE_PATH/action_build ]]; then
     make clean
-fi
+
