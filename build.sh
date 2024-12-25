@@ -53,6 +53,11 @@ if [[ -d $TARGET_DIR ]]; then
     find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" \) -exec rm -f {} +
 fi
 
+###
+mkdir -p "$BASE_PATH/$BUILD_DIR/tmp"
+echo "1" >"$BASE_PATH/$BUILD_DIR/tmp/.build"
+###
+
 make download -j$(nproc)
 make -j$(nproc) || make -j1 V=s
 
