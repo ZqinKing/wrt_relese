@@ -447,6 +447,13 @@ update_nss_pbuf_performance() {
     fi
 }
 
+set_build_signature() {
+    local file="$BUILD_DIR/feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js"
+    if [ -d "$(dirname "$file")" ] && [ -f $file ]; then
+        sed -i "s/(\(luciversion || ''\))/(\1) + (' \/ build by ZqinKing')/g" "$file"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -475,6 +482,7 @@ main() {
     update_pw_ha_chk
     install_opkg_distfeeds
     update_nss_pbuf_performance
+    set_build_signature
     install_feeds
 }
 
