@@ -77,12 +77,16 @@ jobs:
       run: |
         export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
         echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
-        mkdir -p build_cache
 
+    - name: Pre Clone
+      run: ./pre_clone_action.sh ${{ inputs.model }}
+      
     - name: Cache Dependencies
       uses: actions/cache@v4
       with:
-        path: ./build_cache
+        path: |
+          ./action_build/build_dir
+          ./action_build/staging_dir
         key: ${{ inputs.runs-on }}-build-${{ env.BUILD_DATE }}
         restore-keys: |
           ${{ inputs.runs-on }}-build-
