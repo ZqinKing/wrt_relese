@@ -88,7 +88,6 @@ jobs:
         key: ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-${{ env.BUILD_DATE }}
         restore-keys: |
           ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-
-          ${{ inputs.runs-on }}-${{ inputs.model }}-
 
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
