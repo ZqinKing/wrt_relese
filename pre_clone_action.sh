@@ -31,6 +31,7 @@ REPO_BRANCH=${REPO_BRANCH:-main}
 BUILD_DIR="$BASE_PATH/action_build"
 
 echo $REPO_URL $REPO_BRANCH
+echo "$REPO_URL/$REPO_BRANCH" >"$BASE_PATH/repo_flag"
 git clone --depth 1 -b $REPO_BRANCH $REPO_URL $BUILD_DIR
 
 mkdir -p "$BUILD_DIR/staging_dir"
