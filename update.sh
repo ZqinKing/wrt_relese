@@ -454,6 +454,17 @@ set_build_signature() {
     fi
 }
 
+fix_compile_vlmcsd() {
+    local dir="$BUILD_DIR/feeds/packages/net/vlmcsd"
+    local patch_src="$BASE_PATH/patches/001-fix_compile_with_ccache.patch"
+    local patch_dest="$dir/patches"
+
+    if [ -d "$dir" ]; then
+        mkdir -p "$patch_dest"
+        cp -f "$patch_src" "$patch_dest"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -483,6 +494,7 @@ main() {
     install_opkg_distfeeds
     update_nss_pbuf_performance
     set_build_signature
+    fix_compile_vlmcsd
     install_feeds
 }
 

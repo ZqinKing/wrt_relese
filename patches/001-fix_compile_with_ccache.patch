@@ -1,0 +1,13 @@
+--- a/src/GNUmakefile
++++ b/src/GNUmakefile
+@@ -72,6 +72,10 @@ VERBOSE ?= NO
+ CC ?= gcc
+ TARGETPLATFORM := $(shell LANG=en_US.UTF-8 $(CC) -v 2>&1 | grep '^Target: ' | cut -f 2 -d ' ')
+ 
++ifeq ($(findstring ccache,$(CC)),ccache)
++	override CC := $(subst ccache ,,$(CC))
++endif
++
+ ifneq (,$(findstring darwin,$(TARGETPLATFORM)))
+   DARWIN := 1
+   UNIX := 1
