@@ -465,6 +465,14 @@ fix_compile_vlmcsd() {
     fi
 }
 
+update_nss_diag() {
+    local file="$BUILD_DIR/package/kernel/mac80211/files/nss_diag.sh"
+    if [ -d "$(dirname "$file")" ] && [ -f "$file" ]; then
+        \rm -f "$file"
+        install -m 755 -D "$BASE_PATH/patches/nss_diag.sh" "$file"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -495,6 +503,7 @@ main() {
     update_nss_pbuf_performance
     set_build_signature
     fix_compile_vlmcsd
+    update_nss_diag
     install_feeds
 }
 
