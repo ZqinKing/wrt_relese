@@ -473,6 +473,13 @@ update_nss_diag() {
     fi
 }
 
+update_menu_location() {
+    local samba4_path="$BUILD_DIR/feeds/luci/applications/luci-app-samba4/root/usr/share/luci/menu.d/luci-app-samba4.json"
+    if [ -d "$(dirname "$samba4_path")" ] && [ -f "$samba4_path" ]; then
+        sed -i 's/nas/services/g' "$samba4_path"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -504,6 +511,7 @@ main() {
     set_build_signature
     fix_compile_vlmcsd
     update_nss_diag
+    update_menu_location
     install_feeds
 }
 
