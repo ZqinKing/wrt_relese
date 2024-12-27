@@ -80,9 +80,17 @@ jobs:
         export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
         echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
 
+    - name: Machine Information
+      run: |
+        echo "=============================="
+        lscpu | grep -E "name|Core|Thread"
+        echo "=============================="
+        df -h
+        echo "=============================="
+
     - name: Pre Clone
       run: ./pre_clone_action.sh ${{ inputs.model }}
-      
+
     - name: Cache Dependencies
       uses: actions/cache@v4
       with:
@@ -92,7 +100,7 @@ jobs:
         key: ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-${{ env.BUILD_DATE }}
         restore-keys: |
           ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-
-    
+
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
 
