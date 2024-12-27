@@ -80,7 +80,7 @@ jobs:
         echo "=============================="
         df -h
         echo "=============================="
-        
+
     - name: Initialization Values
       run: |
         export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
@@ -88,7 +88,7 @@ jobs:
 
     - name: Pre Clone
       run: ./pre_clone_action.sh ${{ inputs.model }}
-      
+
     - name: Cache Dependencies
       uses: actions/cache@v4
       with:
@@ -101,7 +101,7 @@ jobs:
 
     - name: Build Firmware
       run: ./build.sh ${{ inputs.model }}
-        
+
     - name: Upload Firmware
       uses: actions/upload-artifact@v4
       with:
