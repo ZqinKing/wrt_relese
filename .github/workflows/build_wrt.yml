@@ -15,7 +15,7 @@ on:
           - jdcloud_ipq60xx_lede
           - cmcc_rax3000m_immwrt
           - redmi_ax6000_immwrt21
-          - jdcloud_ax6000_immwrt23
+          - jdcloud_ax6000_immwrt
           - redmi_ax5_libwrt
           - zn_m2_libwrt
           - x64_immwrt
