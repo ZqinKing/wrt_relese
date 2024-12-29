@@ -1,5 +1,5 @@
-name: Build N1
-run-name: Build - N1
+name: Relese N1
+run-name: Relese - N1
 
 on:
   workflow_dispatch:
