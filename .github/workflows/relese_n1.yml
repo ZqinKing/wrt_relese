@@ -101,7 +101,7 @@ jobs:
       env:
         OPENWRT_ARMVIRT: firmware/*.tar.gz
         PACKAGE_SOC: s905d
-        KERNEL_VERSION_NAME: 6.1.y_6.6.y
+        KERNEL_VERSION_NAME: 6.6.y
         WHOAMI: ZqinKing
 
     - name: Prepare Release Body
