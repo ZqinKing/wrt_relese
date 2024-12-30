@@ -8,7 +8,7 @@ on:
         required: true
         description: Device Model
         type: choice
-        default: jdcloud_ipq60xx_libwrt
+        default: jdcloud_ipq60xx_immwrt
         options:
           - jdcloud_ipq60xx_libwrt
           - jdcloud_ipq60xx_immwrt
@@ -19,6 +19,7 @@ on:
           - redmi_ax5_libwrt
           - zn_m2_libwrt
           - x64_immwrt
+          - jdcloud_ipq60xx_k612
       runs-on:
         required: true
         description: Runs on...
