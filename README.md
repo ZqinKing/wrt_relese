@@ -24,3 +24,6 @@ cd wrt_relese
 
 编译CMCC RAX3000M:  
 ./build.sh cmcc_rax3000m_immwrt21  
+  
+三方插件源自：https://github.com/kenzok8/small-package.git  
+  
