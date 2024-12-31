@@ -12,3 +12,4 @@ compilecfg/test.ini
 deconfig/test.config
 *.swp
 .vscode/settings.json
+deconfig/*.bak
