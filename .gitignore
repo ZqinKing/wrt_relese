@@ -13,3 +13,4 @@ deconfig/test.config
 *.swp
 .vscode/settings.json
 deconfig/*.bak
+test.sh
