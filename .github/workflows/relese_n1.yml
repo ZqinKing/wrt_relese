@@ -71,6 +71,7 @@ jobs:
           path: |
             ./action_build/.ccache
             ./action_build/staging_dir
+            ./action_build/dl
           key: ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-${{ env.BUILD_DATE }}
           restore-keys: |
             ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-
@@ -84,9 +85,12 @@ jobs:
           for key in $caches; do
             gh cache delete $key
           done
+          find ./action_build/dl -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} \;
+          find ./action_build/dl -maxdepth 1 -type f -size +10M -exec rm -f {} \;
           echo "========cache status========"
           echo "ccache: $(du -sh ./action_build/.ccache | cut -f 1)"
           echo "staging: $(du -sh ./action_build/staging_dir | cut -f 1)"
+          echo "dl: $(du -sh ./action_build/dl | cut -f 1)"
 
       - name: Machine Information
         run: |
