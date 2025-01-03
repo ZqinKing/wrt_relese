@@ -119,6 +119,9 @@ remove_unwanted_packages() {
     if [[ -d ./package/istore ]]; then
         \rm -rf ./package/istore
     fi
+
+    # 临时放一下，清理脚本
+    find $BUILD_DIR/package/base-files/files/etc/uci-defaults/ -type f -name "9*.sh" -exec rm -f {} +
 }
 
 update_golang() {
@@ -300,41 +303,22 @@ fix_mkpkg_format_invalid() {
 }
 
 add_ax6600_led() {
-    local target_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files"
-    local initd_dir="$target_dir/etc/init.d"
-    local sbin_dir="$target_dir/sbin"
     local athena_led_dir="$BUILD_DIR/package/emortal/luci-app-athena-led"
 
-    if [ -d "$(dirname "$target_dir")" ] && [ -d "$initd_dir" ]; then
-        cat <<'EOF' >"$initd_dir/start_screen"
-#!/bin/sh /etc/rc.common
+    # 删除旧的目录（如果存在）
+    rm -rf "$athena_led_dir" 2>/dev/null
 
-START=99
+    # 克隆最新的仓库
+    git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_dir"
 
-boot() {
-    case $(board_name) in
-    jdcloud,ax6600|\
-    jdcloud,re-cs-02)
-        ax6600_led >/dev/null 2>&1 &
-        ;;
-    esac
-}
-EOF
-        chmod +x "$initd_dir/start_screen"
-        mkdir -p "$sbin_dir"
-        install -m 755 -D "$BASE_PATH/patches/ax6600_led" "$sbin_dir/ax6600_led"
-
-        # 临时加一下
-        install -m 755 -D "$BASE_PATH/patches/cpuusage" "$sbin_dir/cpuusage"
-    fi
-
-    \rm -rf $athena_led_dir 2>/dev/null
+    # 设置执行权限
+    chmod +x "$athena_led_dir/root/usr/sbin/athena-led"
+    chmod +x "$athena_led_dir/root/etc/init.d/athena_led"
 }
 
 chanage_cpuusage() {
     local luci_dir="$BUILD_DIR/feeds/luci/modules/luci-base/root/usr/share/rpcd/ucode/luci"
-    local imm_script1="$BUILD_DIR/package/base-files/files/etc/uci-defaults/993_set-nss-load.sh"
-    local imm_script2="$BUILD_DIR/package/base-files/files/sbin/cpuusage"
+    local imm_script1="$BUILD_DIR/package/base-files/files/sbin/cpuusage"
 
     if [ -f $luci_dir ]; then
         sed -i "s#const fd = popen('top -n1 | awk \\\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\\'')#const cpuUsageCommand = access('/sbin/cpuusage') ? '/sbin/cpuusage' : 'top -n1 | awk \\\'/^CPU/ {printf(\"%d%\", 100 - \$8)}\\\''#g" $luci_dir
@@ -342,15 +326,10 @@ chanage_cpuusage() {
     fi
 
     if [ -f "$imm_script1" ]; then
-        \rm -f "$imm_script1"
+        rm -f "$imm_script1"
     fi
 
-    if [ -f "$imm_script2" ]; then
-        \rm -f "$imm_script2"
-    fi
-
-    # 临时放一下，清理脚本
-    find $BUILD_DIR/package/base-files/files/etc/uci-defaults/ -type f -name "9*.sh" -exec rm -f {} +
+    install -m 755 -D "$BASE_PATH/patches/cpuusage" "$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/sbin/cpuusage"
 }
 
 update_tcping() {
