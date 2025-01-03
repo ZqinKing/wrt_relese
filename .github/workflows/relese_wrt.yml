@@ -38,86 +38,88 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Free Disk Space
-      uses: endersonmenezes/free-disk-space@main
-      with:
-        remove_android: true
-        remove_dotnet: true
-        remove_haskell: true
-        remove_tool_cache: true
-        remove_swap: true
-        remove_packages: "android* azure* clang* dotnet* firefox* ghc* golang* google* libclang* libgl1* lld* llvm* \
-          microsoft* mongodb* mono* mysql* nodejs* openjdk* php* postgresql* powershell* snap* temurin* yarn* zulu*"
-        remove_packages_one_command: true
-        remove_folders: "/etc/apt/sources.list.d* /etc/mono* /etc/mysql* /usr/include/linux/android* /usr/lib/llvm* /usr/lib/mono* \
-          /usr/local/lib/android* /usr/local/lib/node_modules* /usr/local/share/chromium* /usr/local/share/powershell* \
-          /usr/local/share/vcpkg/ports/azure* /usr/local/share/vcpkg/ports/google* /usr/local/share/vcpkg/ports/libpq/android* \
-          /usr/local/share/vcpkg/ports/llvm* /usr/local/share/vcpkg/ports/mysql* /usr/local/share/vcpkg/ports/snap* \
-          /usr/share/azure* /usr/share/dotnet* /usr/share/glade* /usr/share/miniconda* /usr/share/php* /usr/share/swift \
-          /var/lib/mysql* /var/log/azure*"
-        testing: false
+      - name: Free Disk Space
+        uses: FirelightFlagboy/gh-runner-free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
 
-    - name: Initialization Environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo -E apt -yqq update
-        sudo -E apt -yqq full-upgrade
-        sudo -E apt -yqq autoremove --purge
-        sudo -E apt -yqq autoclean
-        sudo -E apt -yqq clean
-        sudo -E apt -yqq install dos2unix
-        sudo -E apt -yqq install libfuse-dev
-        sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
-        sudo -E systemctl daemon-reload
-        sudo -E timedatectl set-timezone "Asia/Shanghai"
+      - name: Initialization Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo -E apt -yqq update
+          sudo -E apt -yqq full-upgrade
+          sudo -E apt -yqq autoremove --purge
+          sudo -E apt -yqq autoclean
+          sudo -E apt -yqq clean
+          sudo -E apt -yqq install dos2unix
+          sudo -E apt -yqq install libfuse-dev
+          sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+          sudo -E systemctl daemon-reload
+          sudo -E timedatectl set-timezone "Asia/Shanghai"
 
-    - name: Initialization Values
-      run: |
-        export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
-        echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
-        export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
-        echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
+      - name: Initialization Values
+        run: |
+          export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
+          echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+          export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
+          echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
 
-    - name: Machine Information
-      run: |
-        echo "=============================="
-        lscpu | grep -E "name|Core|Thread"
-        echo "=============================="
-        df -h
-        echo "=============================="
+      - name: Pre Clone
+        run: ./pre_clone_action.sh ${{ inputs.model }}
 
-    - name: Pre Clone
-      run: ./pre_clone_action.sh ${{ inputs.model }}
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./action_build/.ccache
+            ./action_build/staging_dir
+          key: ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-${{ env.BUILD_DATE }}
+          restore-keys: |
+            ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-
 
-    - name: Cache Dependencies
-      uses: actions/cache@v4
-      with:
-        path: |
-          ./action_build/.ccache
-          ./action_build/staging_dir
-        key: ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-${{ env.BUILD_DATE }}
-        restore-keys: |
-          ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-
+      - name: Build Firmware
+        run: ./build.sh ${{ inputs.model }}
 
-    - name: Build Firmware
-      run: ./build.sh ${{ inputs.model }}
+      - name: Delete Old Cache
+        run: |
+          caches=$(gh cache list --key ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}- --json key --jq '.[] | .key')
+          for key in $caches; do
+            gh cache delete $key
+          done
+          echo "========cache status========"
+          echo "ccache: $(du -sh ./action_build/.ccache | cut -f 1)"
+          echo "staging: $(du -sh ./action_build/staging_dir | cut -f 1)"
 
-    - name: Prepare Release Body
-      run: |
-        echo "云编译发布" > release_body.txt
-        echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
-        echo "Kernel: $(grep -oP "^Linux-Version:.*" ./action_build/tmp/.targetinfo | head -n 1 | awk '{print $2}')" >> release_body.txt
-        echo "WIFI密码：12345678" >> release_body.txt
-        echo "LAN地址：192.168.1.1" >> release_body.txt
-        echo "插件：" >> release_body.txt
-        echo "$(grep -oP "luci-app-[a-zA-Z0-9]{1,30}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
+      - name: Machine Information
+        run: |
+          echo "=============================================="
+          lscpu | grep -E "name|Core|Thread"
+          echo "=============================================="
+          df -h
+          echo "=============================================="
 
-    - name: Release Firmware
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
-        files: ./firmware/*.*
-        body_path: ./release_body.txt
+      - name: Prepare Release Body
+        run: |
+          echo "云编译发布" > release_body.txt
+          echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
+          echo "Kernel: $(grep -oP "^Linux-Version:.*" ./action_build/tmp/.targetinfo | head -n 1 | awk '{print $2}')" >> release_body.txt
+          echo "WIFI密码: 12345678" >> release_body.txt
+          echo "LAN地址: 192.168.1.1" >> release_body.txt
+          echo "插件：" >> release_body.txt
+          echo "$(grep -oP "luci-app-[a-zA-Z0-9]{1,30}" ./firmware/*.manifest | awk -F":" '{print $NF}')"  >> release_body.txt
+
+      - name: Release Firmware
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
+          files: ./firmware/*.*
+          body_path: ./release_body.txt
