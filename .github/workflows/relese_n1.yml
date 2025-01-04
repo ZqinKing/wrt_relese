@@ -78,10 +78,14 @@ jobs:
 
       - name: Refresh the cache
         run: |
-          find "./action_build/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r dir; do
-            find "$dir" -type f -exec touch {} +
-          done
-          find "./action_build/dl" -type f -exec touch {} +
+          if [ -d "./action_build/staging_dir" ]; then
+            find "./action_build/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r dir; do
+                find "$dir" -type f -exec touch {} +
+            done
+          fi
+          if [ -d "./action_build/dl" ]; then
+              find "./action_build/dl" -type f -exec touch {} +
+          fi
 
       - name: Build Firmware
         run: ./build.sh ${{ inputs.model }}
