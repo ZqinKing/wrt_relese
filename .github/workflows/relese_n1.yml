@@ -76,17 +76,26 @@ jobs:
           restore-keys: |
             ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-
 
+      - name: Refresh the cache
+        run: |
+          find "./action_build/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r dir; do
+            find "$dir" -type f -exec touch {} +
+          done
+          find "./action_build/dl" -type f -exec touch {} +
+
       - name: Build Firmware
         run: ./build.sh ${{ inputs.model }}
 
       - name: Delete Old Cache
         run: |
-          caches=$(gh cache list --key ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}- --json key --jq '.[] | .key')
-          for key in $caches; do
-            gh cache delete $key
+          # 获取缓存列表并删除
+          gh cache list --key ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}- --json key --jq '.[] | .key' | while read -r key; do
+            gh cache delete "$key"
           done
-          find ./action_build/dl -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} \;
-          find ./action_build/dl -maxdepth 1 -type f -size +10M -exec rm -f {} \;
+          # 删除 action_build/dl 目录下的旧缓存
+          find ./action_build/dl -maxdepth 1 -mindepth 1 -type d -exec rm -rf {} +
+          find ./action_build/dl -maxdepth 1 -type f -size +10M -exec rm -f {} +
+          # 输出缓存状态
           echo "========cache status========"
           echo "ccache: $(du -sh ./action_build/.ccache | cut -f 1)"
           echo "staging: $(du -sh ./action_build/staging_dir | cut -f 1)"
