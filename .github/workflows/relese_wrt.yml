@@ -20,6 +20,7 @@ on:
           - zn_m2_libwrt
           - x64_immwrt
           - jdcloud_ipq60xx_k612
+          - n1_immwrt
       runs-on:
         required: true
         description: Runs on...
@@ -122,6 +123,15 @@ jobs:
           df -h
           echo "=============================================="
 
+      - name: Package OpenWrt Firmware
+        if: ${{ inputs.model == 'n1_immwrt' }}
+        uses: unifreq/openwrt_packit@master
+        env:
+          OPENWRT_ARMVIRT: firmware/*.tar.gz
+          PACKAGE_SOC: s905d
+          KERNEL_VERSION_NAME: 6.6.y
+          WHOAMI: ZqinKing
+
       - name: Prepare Release Body
         run: |
           echo "云编译发布" > release_body.txt
@@ -136,5 +146,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.BUILD_DATE }}_${{ inputs.model }}
-          files: ./firmware/*.*
+          files: ${{ inputs.model == 'n1_immwrt' && env.PACKAGED_OUTPUTPATH || './firmware' }}/*.*
           body_path: ./release_body.txt
