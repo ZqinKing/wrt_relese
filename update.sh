@@ -169,14 +169,13 @@ fix_default_set() {
 }
 
 fix_miniupmpd() {
-    local PKG_HASH=$(awk -F"=" '/^PKG_HASH:/ {print $2}' ./feeds/packages/net/miniupnpd/Makefile)
-    if [[ $PKG_HASH == "fbdd5501039730f04a8420ea2f8f54b7df63f9f04cde2dc67fa7371e80477bbe" ]]; then
-        if [[ -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ]]; then
-            if [[ ! -d ./feeds/packages/net/miniupnpd/patches ]]; then
-                mkdir -p ./feeds/packages/net/miniupnpd/patches
-            fi
-            \cp -f $BASE_PATH/patches/400-fix_nft_miniupnp.patch ./feeds/packages/net/miniupnpd/patches/
-        fi
+    # 从 miniupnpd 的 Makefile 中提取 PKG_HASH 的值
+    local PKG_HASH=$(grep '^PKG_HASH:=' "$BUILD_DIR/feeds/packages/net/miniupnpd/Makefile" 2>/dev/null | cut -d '=' -f 2)
+
+    # 检查 miniupnp 版本，并且补丁文件是否存在
+    if [[ $PKG_HASH == "fbdd5501039730f04a8420ea2f8f54b7df63f9f04cde2dc67fa7371e80477bbe" && -f "$BASE_PATH/patches/400-fix_nft_miniupnp.patch" ]]; then
+        # 使用 install 命令创建目录并复制补丁文件
+        install -Dm644 "$BASE_PATH/patches/400-fix_nft_miniupnp.patch" "$BUILD_DIR/feeds/packages/net/miniupnpd/patches/400-fix_nft_miniupnp.patch"
     fi
 }
 
@@ -203,11 +202,7 @@ fix_mk_def_depends() {
 }
 
 add_wifi_default_set() {
-    local uci_dir="$BUILD_DIR/package/base-files/files/etc/uci-defaults"
     local ipq_uci_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/uci-defaults"
-    if [ -f "$uci_dir/990_set-wireless.sh" ]; then
-        \rm -f "$uci_dir/990_set-wireless.sh"
-    fi
     if [ -d "$ipq_uci_dir" ]; then
         install -m 755 -D "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq_uci_dir/992_set-wifi-uci.sh"
     fi
