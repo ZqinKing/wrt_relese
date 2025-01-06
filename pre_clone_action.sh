@@ -34,4 +34,9 @@ echo $REPO_URL $REPO_BRANCH
 echo "$REPO_URL/$REPO_BRANCH" >"$BASE_PATH/repo_flag"
 git clone --depth 1 -b $REPO_BRANCH $REPO_URL $BUILD_DIR
 
-mkdir -p "$BUILD_DIR/staging_dir"
+# GitHub Action 移除国内下载源
+PROJECT_MIRRORS_FILE="$BUILD_DIR/scripts/projectsmirrors.json"
+
+if [ -f "$PROJECT_MIRRORS_FILE" ]; then
+    sed -i '/.cn\//d; /tencent/d; /aliyun/d' "$PROJECT_MIRRORS_FILE"
+fi
