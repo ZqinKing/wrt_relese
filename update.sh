@@ -372,19 +372,16 @@ add_wg_chk() {
 }
 
 update_pw_ha_chk() {
-    local pw_ha_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/haproxy_check.sh"
     local new_path="$BASE_PATH/patches/haproxy_check.sh"
-    local ha_lua_path="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall/haproxy.lua"
+    local pw_share_dir="$BUILD_DIR/feeds/small8/luci-app-passwall/root/usr/share/passwall"
+    local pw_ha_path="$pw_share_dir/haproxy_check.sh"
+    local ha_lua_path="$pw_share_dir/haproxy.lua"
+    local smartdns_lua_path="$pw_share_dir/helper_smartdns_add.lua"
 
-    if [ -f "$pw_ha_path" ]; then
-        rm -f "$pw_ha_path"
-    fi
-
+    [ -f "$pw_ha_path" ] && rm -f "$pw_ha_path"
     install -m 755 -D "$new_path" "$pw_ha_path"
-
-    if [ -f $ha_lua_path ]; then
-        sed -i 's/rise 1 fall 3/rise 3 fall 2/g' "$ha_lua_path"
-    fi
+    [ -f "$ha_lua_path" ] && sed -i 's/rise 1 fall 3/rise 3 fall 2/g' "$ha_lua_path"
+    [ -f "$smartdns_lua_path" ] && sed -i '/force-qtype-SOA 65/d' "$smartdns_lua_path"
 }
 
 install_opkg_distfeeds() {
