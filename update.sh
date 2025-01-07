@@ -303,11 +303,7 @@ add_ax6600_led() {
     rm -rf "$athena_led_dir" 2>/dev/null
 
     # 克隆最新的仓库
-    git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_dir"
-
-    # 设置执行权限
-    chmod +x "$athena_led_dir/root/usr/sbin/athena-led"
-    chmod +x "$athena_led_dir/root/etc/init.d/athena_led"
+    git clone --depth=1 https://github.com/haipengno1/luci-app-athena-led.git "$athena_led_dir"
 }
 
 chanage_cpuusage() {
