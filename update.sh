@@ -159,7 +159,7 @@ fix_default_set() {
         find "$BUILD_DIR/feeds/small8/luci-theme-argon" -type f -name "cascade*" -exec sed -i 's/--bar-bg/--primary/g' {} \;
     fi
 
-    install -m 755 -D "$BASE_PATH/patches/99_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
+    install -Dm755 "$BASE_PATH/patches/99_set_argon_primary" "$BUILD_DIR/package/base-files/files/etc/uci-defaults/99_set_argon_primary"
 
     if [ -f "$BUILD_DIR/package/emortal/autocore/files/tempinfo" ]; then
         if [ -f "$BASE_PATH/patches/tempinfo" ]; then
@@ -204,7 +204,7 @@ fix_mk_def_depends() {
 add_wifi_default_set() {
     local ipq_uci_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/uci-defaults"
     if [ -d "$ipq_uci_dir" ]; then
-        install -m 755 -D "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq_uci_dir/992_set-wifi-uci.sh"
+        install -Dm755 "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq_uci_dir/992_set-wifi-uci.sh"
     fi
 }
 
@@ -303,7 +303,10 @@ add_ax6600_led() {
     rm -rf "$athena_led_dir" 2>/dev/null
 
     # 克隆最新的仓库
-    git clone --depth=1 https://github.com/haipengno1/luci-app-athena-led.git "$athena_led_dir"
+    git clone --depth=1 https://github.com/NONGFAH/luci-app-athena-led.git "$athena_led_dir"
+    # 设置执行权限
+    chmod +x "$athena_led_dir/root/usr/sbin/athena-led"
+    chmod +x "$athena_led_dir/root/etc/init.d/athena_led"
 }
 
 chanage_cpuusage() {
@@ -319,7 +322,7 @@ chanage_cpuusage() {
         rm -f "$imm_script1"
     fi
 
-    install -m 755 -D "$BASE_PATH/patches/cpuusage" "$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/sbin/cpuusage"
+    install -Dm755 "$BASE_PATH/patches/cpuusage" "$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/sbin/cpuusage"
 }
 
 update_tcping() {
@@ -367,7 +370,7 @@ EOF
 add_wg_chk() {
     local sbin_path="$BUILD_DIR/package/base-files/files/sbin"
     if [[ -d "$sbin_path" ]]; then
-        install -m 755 -D "$BASE_PATH/patches/wireguard_check.sh" "$sbin_path/wireguard_check.sh"
+        install -Dm755 "$BASE_PATH/patches/wireguard_check.sh" "$sbin_path/wireguard_check.sh"
     fi
 }
 
@@ -379,7 +382,7 @@ update_pw_ha_chk() {
     local smartdns_lua_path="$pw_share_dir/helper_smartdns_add.lua"
 
     [ -f "$pw_ha_path" ] && rm -f "$pw_ha_path"
-    install -m 755 -D "$new_path" "$pw_ha_path"
+    install -Dm755 "$new_path" "$pw_ha_path"
     [ -f "$ha_lua_path" ] && sed -i 's/rise 1 fall 3/rise 3 fall 2/g' "$ha_lua_path"
     [ -f "$smartdns_lua_path" ] && sed -i '/force-qtype-SOA 65/d' "$smartdns_lua_path"
 }
@@ -393,7 +396,7 @@ install_opkg_distfeeds() {
     local distfeeds_conf="$emortal_def_dir/files/99-distfeeds.conf"
 
     if [ -d "$emortal_def_dir" ] && [ ! -f "$distfeeds_conf" ]; then
-        install -m 755 -D "$BASE_PATH/patches/99-distfeeds.conf" "$distfeeds_conf"
+        install -Dm755 "$BASE_PATH/patches/99-distfeeds.conf" "$distfeeds_conf"
 
         sed -i "/define Package\/default-settings\/install/a\\
 \\t\$(INSTALL_DIR) \$(1)/etc\\n\
@@ -435,7 +438,7 @@ update_nss_diag() {
     local file="$BUILD_DIR/package/kernel/mac80211/files/nss_diag.sh"
     if [ -d "$(dirname "$file")" ] && [ -f "$file" ]; then
         \rm -f "$file"
-        install -m 755 -D "$BASE_PATH/patches/nss_diag.sh" "$file"
+        install -Dm755 "$BASE_PATH/patches/nss_diag.sh" "$file"
     fi
 }
 
