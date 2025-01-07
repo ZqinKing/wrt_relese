@@ -449,6 +449,13 @@ update_menu_location() {
     fi
 }
 
+fix_compile_coremark() {
+    local file="$BUILD_DIR/feeds/packages/utils/coremark/Makefile"
+    if [ -d "$(dirname "$file")" ] && [ -f "$file" ]; then
+        sed -i 's/mkdir \$/mkdir -p \$/g' "$file"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -480,6 +487,7 @@ main() {
     fix_compile_vlmcsd
     update_nss_diag
     update_menu_location
+    fix_compile_coremark
     install_feeds
 }
 
