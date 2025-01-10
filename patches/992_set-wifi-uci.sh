@@ -13,22 +13,23 @@ configure_wifi() {
     if [ -n "$now_encryption" ] && [ "$now_encryption" != "none" ]; then
         return 0
     fi
-
-    uci set wireless.radio${radio}.channel="${channel}"
-    uci set wireless.radio${radio}.htmode="${htmode}"
-    uci set wireless.radio${radio}.mu_beamformer='1'
-    uci set wireless.radio${radio}.country='US'
-    uci set wireless.radio${radio}.txpower="${txpower}"
-    uci set wireless.radio${radio}.disabled='0'
-    uci set wireless.default_radio${radio}.ssid="${ssid}"
-    uci set wireless.default_radio${radio}.encryption='psk2+ccmp'
-    uci set wireless.default_radio${radio}.key="${key}"
-    uci set wireless.default_radio${radio}.ieee80211k='1'
-    uci set wireless.default_radio${radio}.time_advertisement='2'
-    uci set wireless.default_radio${radio}.time_zone='CST-8'
-    uci set wireless.default_radio${radio}.bss_transition='1'
-    uci set wireless.default_radio${radio}.wnm_sleep_mode='1'
-    uci set wireless.default_radio${radio}.wnm_sleep_mode_no_keys='1'
+    uci -q batch <<EOF
+set wireless.radio${radio}.channel="${channel}"
+set wireless.radio${radio}.htmode="${htmode}"
+set wireless.radio${radio}.mu_beamformer='1'
+set wireless.radio${radio}.country='US'
+set wireless.radio${radio}.txpower="${txpower}"
+set wireless.radio${radio}.disabled='0'
+set wireless.default_radio${radio}.ssid="${ssid}"
+set wireless.default_radio${radio}.encryption='psk2+ccmp'
+set wireless.default_radio${radio}.key="${key}"
+set wireless.default_radio${radio}.ieee80211k='1'
+set wireless.default_radio${radio}.time_advertisement='2'
+set wireless.default_radio${radio}.time_zone='CST-8'
+set wireless.default_radio${radio}.bss_transition='1'
+set wireless.default_radio${radio}.wnm_sleep_mode='1'
+set wireless.default_radio${radio}.wnm_sleep_mode_no_keys='1'
+EOF
 }
 
 jdc_ax1800_pro_wifi_cfg() {
@@ -48,16 +49,16 @@ redmi_ax5_wifi_cfg() {
 }
 
 case "${board_name}" in
-jdcloud,ax1800-pro|\
-jdcloud,re-ss-01)
+jdcloud,ax1800-pro | \
+    jdcloud,re-ss-01)
     jdc_ax1800_pro_wifi_cfg
     ;;
-jdcloud,ax6600|\
-jdcloud,re-cs-02)
+jdcloud,ax6600 | \
+    jdcloud,re-cs-02)
     jdc_ax6600_wifi_cfg
     ;;
-redmi,ax5|\
-redmi,ax5-jdcloud)
+redmi,ax5 | \
+    redmi,ax5-jdcloud)
     redmi_ax5_wifi_cfg
     ;;
 *)

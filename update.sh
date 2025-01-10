@@ -456,12 +456,23 @@ fix_compile_coremark() {
     fi
 }
 
+update_homeproxy() {
+    local repo_url="https://github.com/immortalwrt/homeproxy.git"
+    local target_dir="$BUILD_DIR/feeds/small8/luci-app-homeproxy"
+
+    if [ -d "$target_dir" ]; then
+        rm -rf "$target_dir"
+        git clone "$repo_url" "$target_dir"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
     reset_feeds_conf
     update_feeds
     remove_unwanted_packages
+    update_homeproxy
     fix_default_set
     fix_miniupmpd
     update_golang
