@@ -202,9 +202,13 @@ fix_mk_def_depends() {
 }
 
 add_wifi_default_set() {
-    local ipq_uci_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/uci-defaults"
-    if [ -d "$ipq_uci_dir" ]; then
-        install -Dm755 "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq_uci_dir/992_set-wifi-uci.sh"
+    local ipq60xx_uci_dir="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/uci-defaults"
+    local ipq807x_uci_dir="$BUILD_DIR/target/linux/qualcommax/ipq807x/base-files/etc/uci-defaults"
+    if [ -d "$ipq60xx_uci_dir" ]; then
+        install -Dm755 "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq60xx_uci_dir/992_set-wifi-uci.sh"
+    fi
+    if [ -d "$ipq807x_uci_dir" ]; then
+        install -Dm755 "$BASE_PATH/patches/992_set-wifi-uci.sh" "$ipq807x_uci_dir/992_set-wifi-uci.sh"
     fi
 }
 
@@ -325,6 +329,7 @@ chanage_cpuusage() {
     fi
 
     install -Dm755 "$BASE_PATH/patches/cpuusage" "$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/sbin/cpuusage"
+    install -Dm755 "$BASE_PATH/patches/cpuusage" "$BUILD_DIR/target/linux/qualcommax/ipq807x/base-files/sbin/cpuusage"
 }
 
 update_tcping() {
