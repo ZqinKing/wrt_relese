@@ -19,6 +19,7 @@ set wireless.radio${radio}.htmode="${htmode}"
 set wireless.radio${radio}.mu_beamformer='1'
 set wireless.radio${radio}.country='US'
 set wireless.radio${radio}.txpower="${txpower}"
+set wireless.radio${radio}.cell_density='0'
 set wireless.radio${radio}.disabled='0'
 set wireless.default_radio${radio}.ssid="${ssid}"
 set wireless.default_radio${radio}.encryption='psk2+ccmp'
@@ -48,6 +49,11 @@ redmi_ax5_wifi_cfg() {
     configure_wifi 1 1 HE20 20 'Redmi_AX5' '12345678'
 }
 
+aliyun_ap8220_wifi_cfg() {
+    configure_wifi 0 44 HE160 23 'Aliyun_AP8220_5G' '12345678'
+    configure_wifi 1 1 HE20 22 'Aliyun_AP8220' '12345678'
+}
+
 case "${board_name}" in
 jdcloud,ax1800-pro | \
     jdcloud,re-ss-01)
@@ -60,6 +66,9 @@ jdcloud,ax6600 | \
 redmi,ax5 | \
     redmi,ax5-jdcloud)
     redmi_ax5_wifi_cfg
+    ;;
+aliyun,ap8220)
+    aliyun_ap8220_wifi_cfg
     ;;
 *)
     exit 0
