@@ -50,7 +50,7 @@ fi
 
 TARGET_DIR="$BASE_PATH/$BUILD_DIR/bin/targets"
 if [[ -d $TARGET_DIR ]]; then
-    find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" -o -name "*.itb" -o -name "*.fip" -o -name "*rootfs.tar.gz" \) -exec rm -f {} +
+    find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" -o -name "*.itb" -o -name "*.fip" -o -name "*.ubi" -o -name "*rootfs.tar.gz" \) -exec rm -f {} +
 fi
 
 make download -j$(($(nproc) * 2))
@@ -59,7 +59,7 @@ make -j$(($(nproc) + 1)) || make -j1 V=s
 FIRMWARE_DIR="$BASE_PATH/firmware"
 \rm -rf "$FIRMWARE_DIR"
 mkdir -p "$FIRMWARE_DIR"
-find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" -o -name "*.itb" -o -name "*.fip" -o -name "*rootfs.tar.gz" \) -exec cp -f {} "$FIRMWARE_DIR/" \;
+find "$TARGET_DIR" -type f \( -name "*.bin" -o -name "*.manifest" -o -name "*efi.img.gz" -o -name "*.itb" -o -name "*.fip" -o -name "*.ubi" -o -name "*rootfs.tar.gz" \) -exec cp -f {} "$FIRMWARE_DIR/" \;
 \rm -f "$BASE_PATH/firmware/Packages.manifest" 2>/dev/null
 
 if [[ -d $BASE_PATH/action_build ]]; then

@@ -387,11 +387,23 @@ update_pw_ha_chk() {
     local pw_ha_path="$pw_share_dir/haproxy_check.sh"
     local ha_lua_path="$pw_share_dir/haproxy.lua"
     local smartdns_lua_path="$pw_share_dir/helper_smartdns_add.lua"
+    local rules_dir="$pw_share_dir/rules"
 
+    # 删除旧的 haproxy_check.sh 文件并安装新的
     [ -f "$pw_ha_path" ] && rm -f "$pw_ha_path"
     install -Dm755 "$new_path" "$pw_ha_path"
+
+    # 修改 haproxy.lua 文件中的 rise 和 fall 参数
     [ -f "$ha_lua_path" ] && sed -i 's/rise 1 fall 3/rise 3 fall 2/g' "$ha_lua_path"
+
+    # 删除 helper_smartdns_add.lua 文件中的特定行
     [ -f "$smartdns_lua_path" ] && sed -i '/force-qtype-SOA 65/d' "$smartdns_lua_path"
+
+    # 从 chnlist 文件中删除特定的域名
+    sed -i '/\.bing\./d' "$rules_dir/chnlist"
+    sed -i '/microsoft/d' "$rules_dir/chnlist"
+    sed -i '/msedge/d' "$rules_dir/chnlist"
+    sed -i '/github/d' "$rules_dir/chnlist"
 }
 
 install_opkg_distfeeds() {
