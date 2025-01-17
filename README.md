@@ -17,6 +17,9 @@ cd wrt_relese
 编译京东云百里:  
 ./build.sh jdcloud_ax6000_immwrt  
   
+编译阿里云AP8220:  
+./build.sh aliyun_ap8220_immwrt  
+  
 编译红米AX5:  
 ./build.sh redmi_ax5_immwrt  
   
