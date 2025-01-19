@@ -50,8 +50,8 @@ redmi_ax5_wifi_cfg() {
 }
 
 aliyun_ap8220_wifi_cfg() {
-    configure_wifi 0 44 HE160 23 'Aliyun_AP8220_5G' '12345678'
-    configure_wifi 1 1 HE20 22 'Aliyun_AP8220' '12345678'
+    configure_wifi 0 44 HE160 26 'Aliyun_AP8220_5G' '12345678'
+    configure_wifi 1 1 HE20 24 'Aliyun_AP8220' '12345678'
 }
 
 case "${board_name}" in
