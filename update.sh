@@ -253,9 +253,10 @@ remove_something_nss_kmod() {
 }
 
 remove_affinity_script() {
-    local affinity_script_path="$BUILD_DIR/target/linux/qualcommax/ipq60xx/base-files/etc/init.d/set-irq-affinity"
-    if [ -f "$affinity_script_path" ]; then
-        \rm -f "$affinity_script_path"
+    local affinity_script_dir="$BUILD_DIR/target/linux/qualcommax"
+
+    if [ -d "$affinity_script_dir" ]; then
+        find "$affinity_script_dir" -name "set-irq-affinity" -exec rm -f {} \;
     fi
 }
 
