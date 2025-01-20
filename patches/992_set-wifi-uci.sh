@@ -54,6 +54,11 @@ aliyun_ap8220_wifi_cfg() {
     configure_wifi 1 1 HE20 24 'Aliyun_AP8220' '12345678'
 }
 
+cmcc_rax3000m_wifi_cfg() {
+    configure_wifi 0 1 HE20 23 'CMCC_RAX3000M' '12345678'
+    configure_wifi 1 44 HE160 25 'CMCC_RAX3000M_5G' '12345678'
+}
+
 case "${board_name}" in
 jdcloud,ax1800-pro | \
     jdcloud,re-ss-01)
@@ -69,6 +74,9 @@ redmi,ax5 | \
     ;;
 aliyun,ap8220)
     aliyun_ap8220_wifi_cfg
+    ;;
+cmcc,rax3000m)
+    cmcc_rax3000m_wifi_cfg
     ;;
 *)
     exit 0
