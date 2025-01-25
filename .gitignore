@@ -15,3 +15,4 @@ deconfig/test.config
 deconfig/*.bak
 test.sh
 domain_rule.json
+01-install.sh
