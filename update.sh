@@ -490,6 +490,13 @@ update_homeproxy() {
     fi
 }
 
+update_dnsmasq_conf() {
+    local file="$BUILD_DIR/package/network/services/dnsmasq/files/dhcp.conf"
+    if [ -d "$(dirname "$file")" ] && [ -f "$file" ]; then
+        sed -i '/dns_redirect/d' "$file"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -523,6 +530,7 @@ main() {
     update_nss_diag
     update_menu_location
     fix_compile_coremark
+    update_dnsmasq_conf
     install_feeds
 }
 
