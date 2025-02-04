@@ -395,8 +395,8 @@ update_pw_ha_chk() {
     local rules_dir="$pw_share_dir/rules"
 
     # 删除旧的 haproxy_check.sh 文件并安装新的
-    [ -f "$pw_ha_path" ] && rm -f "$pw_ha_path"
-    install -Dm755 "$new_path" "$pw_ha_path"
+    # [ -f "$pw_ha_path" ] && rm -f "$pw_ha_path"
+    # install -Dm755 "$new_path" "$pw_ha_path"
 
     # 修改 haproxy.lua 文件中的 rise 和 fall 参数
     [ -f "$ha_lua_path" ] && sed -i 's/rise 1 fall 3/rise 3 fall 2/g' "$ha_lua_path"
