@@ -1,0 +1,12 @@
+#!/bin/sh
+# Copyright (C) 2024 ZqinKing <zqinking23@gmail.com>
+
+cpu_usage=$(top -bn1 | head -n2 | awk -F'[ %]+' 'NR==2{print $2}')
+
+if [ -r "/sys/kernel/debug/ppe0/entries" ]; then
+    ppe0_count=$(cat /sys/kernel/debug/ppe0/entries | wc -l)
+    ppe1_count=$(cat /sys/kernel/debug/ppe1/entries | wc -l)
+    echo -n "CPU: ${cpu_usage}% PPE0: ${ppe0_count} PPE1: ${ppe1_count}"
+else
+    echo -n "CPU: ${cpu_usage}%"
+fi
