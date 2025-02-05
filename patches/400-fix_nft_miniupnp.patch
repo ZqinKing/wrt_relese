@@ -70,3 +70,45 @@
  	} else {
  		syslog(LOG_ERR, "%s: invalid addr_min_reg %u", "parse_rule_nat", addr_min_reg);
  	}
+--- a/upnpdescgen.c
++++ b/upnpdescgen.c
+@@ -103,7 +103,7 @@ static const int upnpallowedranges[] = {
+ 	0,
+ 	/* 1 PortMappingLeaseDuration */
+ 	0,
+-	604800,
++	86400,
+ 	/* 3 InternalPort */
+ 	1,
+ 	65535,
+--- a/upnpsoap.c
++++ b/upnpsoap.c
+@@ -514,15 +514,15 @@ AddPortMapping(struct upnphttp * h, cons
+ 	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
+ #ifdef IGD_V2
+ 	/* PortMappingLeaseDuration can be either a value between 1 and
+-	 * 604800 seconds or the zero value (for infinite lease time).
++	 * 86400 seconds or the zero value (for infinite lease time).
+ 	 * Note that an infinite lease time can be only set by out-of-band
+ 	 * mechanisms like WWW-administration, remote management or local
+ 	 * management.
+ 	 * If a control point uses the value 0 to indicate an infinite lease
+ 	 * time mapping, it is REQUIRED that gateway uses the maximum value
+-	 * instead (e.g. 604800 seconds) */
+-	if(leaseduration == 0 || leaseduration > 604800)
+-		leaseduration = 604800;
++	 * instead (e.g. 86400 seconds) */
++	if(leaseduration == 0 || leaseduration > 86400)
++		leaseduration = 86400;
+ #endif
+ 
+ 	syslog(LOG_INFO, "%s: ext port %hu to %s:%hu protocol %s for: %s leaseduration=%u rhost=%s",
+@@ -617,7 +617,7 @@ AddAnyPortMapping(struct upnphttp * h, c
+ 
+ 	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
+ 	if(leaseduration == 0)
+-		leaseduration = 604800;
++		leaseduration = 86400;
+ 
+ 	if (!int_ip || !ext_port || !int_port || !protocol)
+ 	{
