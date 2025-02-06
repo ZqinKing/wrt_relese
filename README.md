@@ -1,4 +1,4 @@
-首先装好 Linux 系统，推荐 Ubuntu LTS  
+首先安装 Linux 系统，推荐 Ubuntu LTS  
 
 安装编译依赖  
 sudo apt -y update  
@@ -33,7 +33,7 @@ cd wrt_relese
 ./build.sh n1_immwrt  
   
 编译X64:  
-./build.sh x64_immwrt.config  
+./build.sh x64_immwrt  
   
 三方插件源自：https://github.com/kenzok8/small-package.git  
   
