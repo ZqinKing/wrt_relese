@@ -10,7 +10,7 @@ sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_e
 git clone https://github.com/ZqinKing/wrt_relese.git  
 cd wrt_relese  
   
-编译京东云雅典娜、亚瑟、太乙、AX5(JDC版):  
+编译京东云雅典娜(02)、亚瑟(01)、太乙(07)、AX5(JDC版):  
 ./build.sh jdcloud_ipq60xx_immwrt  
 ./build.sh jdcloud_ipq60xx_libwrt  
   
