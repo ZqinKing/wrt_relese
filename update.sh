@@ -114,7 +114,9 @@ remove_unwanted_packages() {
     fi
 
     # 临时放一下，清理脚本
-    find $BUILD_DIR/target/linux/qualcommax/base-files/etc/uci-defaults/ -type f -name "99*.sh" -exec rm -f {} +
+    if [ -d "$BUILD_DIR/target/linux/qualcommax/base-files/etc/uci-defaults" ]; then
+        find "$BUILD_DIR/target/linux/qualcommax/base-files/etc/uci-defaults/" -type f -name "99*.sh" -exec rm -f {} +
+    fi
 }
 
 update_golang() {
