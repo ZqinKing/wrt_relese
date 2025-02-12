@@ -491,6 +491,27 @@ update_dnsmasq_conf() {
     fi
 }
 
+# 更新版本
+update_package() {
+    local dir="$BUILD_DIR/feeds/$1"
+    local mk_path="$dir/Makefile"
+    if [ -d "${mk_path%/*}" ] && [ -f "$mk_path" ]; then
+        # 提取repo
+        local PKG_REPO=$(grep -oE "^PKG_SOURCE_URL.*tar\.gz" $mk_path | awk -F"/" '{print $(NF - 2) "/" $(NF -1 )}')
+        if [ -z $PKG_REPO ]; then
+            return 1
+        fi
+        local PKG_VER=$(curl -sL "https://api.github.com/repos/$PKG_REPO/releases" | jq -r "map(select(.prerelease|not)) | first | .tag_name")
+        local PKG_HASH=$(curl -sL "https://codeload.github.com/$PKG_REPO/tar.gz/$PKG_VER" | sha256sum | cut -b -64)
+
+        # 删除PKG_VER开头的v
+        PKG_VER=${PKG_VER#v}
+
+        sed -i 's/^PKG_VERSION:=.*/PKG_VERSION:='$PKG_VER'/g' $mk_path
+        sed -i 's/^PKG_HASH:=.*/PKG_HASH:='$PKG_HASH'/g' $mk_path
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -526,6 +547,7 @@ main() {
     fix_compile_coremark
     update_dnsmasq_conf
     install_feeds
+    update_package "small8/sing-box"
 }
 
 main "$@"
