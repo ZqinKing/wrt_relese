@@ -512,6 +512,14 @@ update_package() {
     fi
 }
 
+update_lucky() {
+    local mk_dir="$BUILD_DIR/feeds/small8/lucky/Makefile"
+    if [ -d "${mk_dir%/*}" ] && [ -f "$mk_dir" ]; then
+        sed -i '/Build\/Prepare/ a\	[ -f $(TOPDIR)/../patches/lucky_Linux_$(LUCKY_ARCH).tar.gz ] && install -Dm644 $(TOPDIR)/../patches/lucky_Linux_$(LUCKY_ARCH).tar.gz $(PKG_BUILD_DIR)/$(PKG_NAME)_$(PKG_VERSION)_Linux_$(LUCKY_ARCH).tar.gz' "$mk_dir"
+        sed -i '/wget/d' "$mk_dir"
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -546,6 +554,7 @@ main() {
     update_menu_location
     fix_compile_coremark
     update_dnsmasq_conf
+    update_lucky
     install_feeds
     update_package "small8/sing-box"
 }
