@@ -520,6 +520,18 @@ update_lucky() {
     fi
 }
 
+# 添加系统升级时的备份信息
+function add_backup_info_to_sysupgrade() {
+    local conf_path="$BUILD_DIR/package/base-files/files/etc/sysupgrade.conf"
+
+    if [ -f "$conf_path" ]; then
+        cat >"$conf_path" <<'EOF'
+/etc/AdGuardHome.yaml
+/etc/lucky/
+EOF
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -555,6 +567,7 @@ main() {
     fix_compile_coremark
     update_dnsmasq_conf
     update_lucky
+    add_backup_info_to_sysupgrade
     install_feeds
     update_package "small8/sing-box"
 }
