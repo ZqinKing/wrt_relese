@@ -37,9 +37,23 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check Server Performance(检查服务器性能)
+        run: |
+          echo "警告⚠"
+          echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
+          echo -e "已知CPU型号（降序）：7763，8370C，8272CL，8171M，E5-2673 \n"
+          echo "--------------------------CPU信息--------------------------"
+          echo "CPU物理数量：$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+          echo -e "CPU核心信息：$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
+          echo "--------------------------内存信息--------------------------"
+          echo "已安装内存详细信息："
+          echo -e "$(sudo lshw -short -C memory | grep GiB) \n"
+          echo "--------------------------硬盘信息--------------------------"
+          echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
-      - name: Free Disk Space
+      # - uses: actions/checkout@v4
+
+      - name: Free Disk Space(清理磁盘空间)
         uses: FirelightFlagboy/gh-runner-free-disk-space@main
         with:
           tool-cache: true
@@ -50,33 +64,51 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      - name: Initialization Environment
+      - name: Initialization Environment(安装依赖环境)
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
           sudo -E apt -yqq install dos2unix
           sudo -E apt -yqq install libfuse-dev
+          sudo apt-get install -yqq clang-15
           sudo -E apt -yqq autoremove --purge
           sudo -E apt -yqq autoclean
           sudo -E apt -yqq clean
           sudo -E systemctl daemon-reload
           sudo -E timedatectl set-timezone "Asia/Shanghai"
 
-      - name: Initialization Values
+          echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+
+      - name: Combine Disks(合并磁盘)
+        uses: easimon/maximize-build-space@master
+        with:
+          swap-size-mb: 2048
+          temp-reserve-mb: 100
+          root-reserve-mb: 2048
+
+      - name: Checkout Projects(拉取云编译仓库)
+        uses: actions/checkout@main
+
+      - name: Initialization Values(初始化变量)
         run: |
           export BUILD_DATE=$(TZ=UTC-8 date +"%y.%m.%d_%H.%M.%S")
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
           export BUILD_SRC=$(awk -F"=" '/REPO_URL/ {print $NF}' "./compilecfg/${{ inputs.model }}.ini")
           echo "BUILD_SRC=$BUILD_SRC" >> $GITHUB_ENV
 
-      - name: Pre Clone
-        run: ./pre_clone_action.sh ${{ inputs.model }}
+      - name: Pre Clone(拉取源码)
+        run: |
+          echo "OPENWRT_PATH: $OPENWRT_PATH"
+
+          ./pre_clone_action.sh ${{ inputs.model }}
 
       - name: Cache Dependencies
         uses: actions/cache@v4
         with:
           path: |
+            cd $OPENWRT_PATH
+          
             ./action_build/.ccache
             ./action_build/staging_dir
           key: ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}-${{ env.BUILD_DATE }}
@@ -85,6 +117,8 @@ jobs:
 
       - name: Refresh the cache
         run: |
+          cd $OPENWRT_PATH
+
           if [ -d "./action_build/staging_dir" ]; then
             find "./action_build/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r dir; do
                 find "$dir" -type f -exec touch {} +
@@ -92,15 +126,22 @@ jobs:
           fi
 
       - name: Build Firmware
-        run: ./build.sh ${{ inputs.model }}
+        run: |
+          cd $OPENWRT_PATH
+
+          ./build.sh ${{ inputs.model }}
 
       - name: Get Kernel Verion
         run: |
+          cd $OPENWRT_PATH
+        
           # 获取内核版本
           echo "KVER=$(find ./action_build/dl -maxdepth 1 -name "linux-[4-6]\.*" | sort -r | head -n 1 | grep -oE "[4-6]\.[0-9]{1,3}\.[0-9]{1,3}")" >> $GITHUB_ENV
 
       - name: Delete Old Cache
         run: |
+          cd $OPENWRT_PATH
+
           # 获取缓存列表并删除
           gh cache list --key ${{ inputs.runs-on }}-${{ hashFiles('**/repo_flag') }}- --json key --jq '.[] | .key' | while read -r key; do
             gh cache delete "$key"
@@ -129,6 +170,8 @@ jobs:
 
       - name: Prepare Release Body
         run: |
+          cd $OPENWRT_PATH
+
           echo "云编译发布" > release_body.txt
           echo "源码：${{ env.BUILD_SRC }}" >> release_body.txt
           echo "Kernel: ${{ env.KVER }}" >> release_body.txt
