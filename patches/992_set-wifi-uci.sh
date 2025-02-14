@@ -59,6 +59,11 @@ cmcc_rax3000m_wifi_cfg() {
     configure_wifi 1 44 HE160 25 'CMCC_RAX3000M_5G' '12345678'
 }
 
+redmi_ax6_wifi_cfg() {
+    configure_wifi 0 44 HE160 25 'Redmi_AX6_5G' '12345678'
+    configure_wifi 1 1 HE20 23 'Redmi_AX6' '12345678'
+}
+
 case "${board_name}" in
 jdcloud,ax1800-pro | \
     jdcloud,re-ss-01)
@@ -77,6 +82,10 @@ aliyun,ap8220)
     ;;
 cmcc,rax3000m)
     cmcc_rax3000m_wifi_cfg
+    ;;
+redmi,ax6 | \
+    redmi,ax6-stock)
+    redmi_ax6_wifi_cfg
     ;;
 *)
     exit 0
