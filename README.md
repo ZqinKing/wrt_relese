@@ -23,6 +23,9 @@ cd wrt_relese
 编译红米AX5:  
 ./build.sh redmi_ax5_immwrt  
   
+编译红米AX6:  
+./build.sh redmi_ax6_immwrt  
+  
 编译红米AX6000:  
 ./build.sh redmi_ax6000_immwrt21  
   
