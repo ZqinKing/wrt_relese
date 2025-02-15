@@ -38,8 +38,6 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Maximize build space
         uses: AdityaGarg8/remove-unwanted-software@main
         with:
@@ -51,6 +49,9 @@ jobs:
           remove-large-packages: "true"
           remove-cached-tools: "true"
           remove-swapfile: "true"
+
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Initialization Environment
         env:
