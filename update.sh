@@ -532,6 +532,49 @@ EOF
     fi
 }
 
+# 更新启动顺序
+function update_script_priority() {
+    # 更新qca-nss驱动的启动顺序
+    local qca_drv_path="$BUILD_DIR/package/feeds/nss_packages/qca-nss-drv/files/qca-nss-drv.init"
+    if [ -d "${qca_drv_path%/*}" ] && [ -f "$qca_drv_path" ]; then
+        sed -i 's/START=.*/START=88/g' "$qca_drv_path"
+    fi
+
+    # 更新pbuf服务的启动顺序
+    local pbuf_path="$BUILD_DIR/package/kernel/mac80211/files/qca-nss-pbuf.init"
+    if [ -d "${pbuf_path%/*}" ] && [ -f "$pbuf_path" ]; then
+        sed -i 's/START=.*/START=89/g' "$pbuf_path"
+    fi
+
+    # 更新mosdns服务的启动顺序
+    local mosdns_path="$BUILD_DIR/package/feeds/small8/luci-app-mosdns/root/etc/init.d/mosdns"
+    if [ -d "${mosdns_path%/*}" ] && [ -f "$mosdns_path" ]; then
+        sed -i 's/START=.*/START=92/g' "$mosdns_path"
+    fi
+}
+
+function optimize_smartDNS() {
+    local smartdns_custom="$BUILD_DIR/package/feeds/small8/smartdns/conf/custom.conf"
+
+    # 检查配置文件所在的目录和文件是否存在
+    if [ -d "${smartdns_custom%/*}" ] && [ -f "$smartdns_custom" ]; then
+        # 优化配置选项：
+        # serve-expired-ttl: 缓存有效期(单位：小时)，默认值影响DNS解析速度
+        # serve-expired-reply-ttl: 过期回复TTL
+        # max-reply-ip-num: 最大IP数
+        # dualstack-ip-selection-threshold: IPv6优先的阈值
+        # server: 配置上游DNS
+        echo "优化SmartDNS配置"
+        cat >"$smartdns_custom" <<'EOF'
+serve-expired-ttl 7200
+serve-expired-reply-ttl 5
+max-reply-ip-num 3
+dualstack-ip-selection-threshold 15
+server 223.5.5.5 -bootstrap-dns
+EOF
+    fi
+}
+
 main() {
     clone_repo
     clean_up
@@ -570,6 +613,8 @@ main() {
     add_backup_info_to_sysupgrade
     install_feeds
     update_package "small8/sing-box"
+    update_script_priority
+    optimize_smartDNS
 }
 
 main "$@"
