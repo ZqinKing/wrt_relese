@@ -39,7 +39,7 @@ jobs:
 
     steps:
       - name: Maximize build space
-        uses: AdityaGarg8/remove-unwanted-software@main
+        uses: AdityaGarg8/remove-unwanted-software@v5
         with:
           remove-dotnet: "true"
           remove-android: "true"
