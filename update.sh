@@ -609,7 +609,7 @@ main() {
     update_menu_location
     fix_compile_coremark
     update_dnsmasq_conf
-    update_lucky
+    # update_lucky
     add_backup_info_to_sysupgrade
     install_feeds
     update_package "small8/sing-box"
