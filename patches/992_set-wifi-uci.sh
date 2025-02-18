@@ -50,7 +50,7 @@ redmi_ax5_wifi_cfg() {
 }
 
 aliyun_ap8220_wifi_cfg() {
-    configure_wifi 0 44 HE80 26 'Aliyun_AP8220_5G' '12345678'
+    configure_wifi 0 149 HE80 26 'Aliyun_AP8220_5G' '12345678'
     configure_wifi 1 1 HE20 23 'Aliyun_AP8220' '12345678'
 }
 
@@ -60,7 +60,7 @@ cmcc_rax3000m_wifi_cfg() {
 }
 
 redmi_ax6_wifi_cfg() {
-    configure_wifi 0 44 HE80 25 'Redmi_AX6_5G' '12345678'
+    configure_wifi 0 149 HE80 25 'Redmi_AX6_5G' '12345678'
     configure_wifi 1 1 HE20 23 'Redmi_AX6' '12345678'
 }
 
