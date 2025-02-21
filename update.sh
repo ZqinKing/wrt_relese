@@ -549,12 +549,14 @@ function update_script_priority() {
     # 更新mosdns服务的启动顺序
     local mosdns_path="$BUILD_DIR/package/feeds/small8/luci-app-mosdns/root/etc/init.d/mosdns"
     if [ -d "${mosdns_path%/*}" ] && [ -f "$mosdns_path" ]; then
-        sed -i 's/START=.*/START=92/g' "$mosdns_path"
+        sed -i 's/START=.*/START=94/g' "$mosdns_path"
     fi
 }
 
 function optimize_smartDNS() {
-    local smartdns_custom="$BUILD_DIR/package/feeds/small8/smartdns/conf/custom.conf"
+    local smartdns_custom="$BUILD_DIR/feeds/small8/smartdns/conf/custom.conf"
+    local smartdns_patch="$BUILD_DIR/feeds/small8/smartdns/patches/010_change_start_order.patch"
+    install -Dm644 "$BASE_PATH/patches/010_change_start_order.patch" "$smartdns_patch"
 
     # 检查配置文件所在的目录和文件是否存在
     if [ -d "${smartdns_custom%/*}" ] && [ -f "$smartdns_custom" ]; then
@@ -611,10 +613,10 @@ main() {
     update_dnsmasq_conf
     # update_lucky
     add_backup_info_to_sysupgrade
+    optimize_smartDNS
     install_feeds
     update_package "small8/sing-box"
     update_script_priority
-    optimize_smartDNS
 }
 
 main "$@"

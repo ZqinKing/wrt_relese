@@ -1,0 +1,11 @@
+--- a/package/openwrt/files/etc/init.d/smartdns
++++ b/package/openwrt/files/etc/init.d/smartdns
+@@ -15,7 +15,7 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-START=19
++START=94
+ STOP=82
+ NAME=smartdns
+ USE_PROCD=1
