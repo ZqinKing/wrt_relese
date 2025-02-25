@@ -109,8 +109,8 @@ enable_affinity_ipq807x() {
     set_affinity 'edma_rxdesc' 3 1
     set_affinity 'edma_misc' 3 1
 
-    # assign nss_queue0 to 1-3
-    set_affinity 'nss_queue0' 1-3 1
+    # assign nss_queue0 to 2-3
+    set_affinity 'nss_queue0' 2-3 1
     
     # assign Copy Engine
     set_affinity 'bam_dma' 1 1
