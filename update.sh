@@ -254,11 +254,13 @@ remove_something_nss_kmod() {
     fi
 }
 
-remove_affinity_script() {
+update_affinity_script() {
     local affinity_script_dir="$BUILD_DIR/target/linux/qualcommax"
 
     if [ -d "$affinity_script_dir" ]; then
         find "$affinity_script_dir" -name "set-irq-affinity" -exec rm -f {} \;
+        find "$affinity_script_dir" -name "smp_affinity" -exec rm -f {} \;
+        install -Dm755 "$BASE_PATH/patches/smp_affinity" "$affinity_script_dir/base-files/etc/init.d/smp_affinity"
     fi
 }
 
@@ -593,7 +595,7 @@ main() {
     add_wifi_default_set
     update_default_lan_addr
     remove_something_nss_kmod
-    remove_affinity_script
+    update_affinity_script
     fix_build_for_openssl
     update_ath11k_fw
     # fix_mkpkg_format_invalid
