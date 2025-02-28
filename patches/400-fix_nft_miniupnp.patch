@@ -83,7 +83,7 @@
  	65535,
 --- a/upnpsoap.c
 +++ b/upnpsoap.c
-@@ -514,15 +514,15 @@ AddPortMapping(struct upnphttp * h, cons
+@@ -514,15 +514,18 @@ AddPortMapping(struct upnphttp * h, cons
  	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
  #ifdef IGD_V2
  	/* PortMappingLeaseDuration can be either a value between 1 and
@@ -98,17 +98,20 @@
 -	if(leaseduration == 0 || leaseduration > 604800)
 -		leaseduration = 604800;
 +	 * instead (e.g. 86400 seconds) */
-+	if(leaseduration == 0 || leaseduration > 86400)
++	if (leaseduration == 0) {
++		leaseduration = 28800;
++	} else if (leaseduration > 86400) {
 +		leaseduration = 86400;
++	}
  #endif
  
  	syslog(LOG_INFO, "%s: ext port %hu to %s:%hu protocol %s for: %s leaseduration=%u rhost=%s",
-@@ -617,7 +617,7 @@ AddAnyPortMapping(struct upnphttp * h, c
+@@ -617,7 +620,7 @@ AddAnyPortMapping(struct upnphttp * h, c
  
  	leaseduration = leaseduration_str ? atoi(leaseduration_str) : 0;
  	if(leaseduration == 0)
 -		leaseduration = 604800;
-+		leaseduration = 86400;
++		leaseduration = 28800;
  
  	if (!int_ip || !ext_port || !int_port || !protocol)
  	{
