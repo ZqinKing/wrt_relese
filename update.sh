@@ -22,7 +22,7 @@ COMMIT_HASH=$4
 
 FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
-GOLANG_BRANCH="23.x"
+GOLANG_BRANCH="24.x"
 THEME_SET="argon"
 LAN_ADDR="192.168.1.1"
 
@@ -90,7 +90,7 @@ remove_unwanted_packages() {
         "smartdns" "mosdns" "adguardhome" "ddns-go" "naiveproxy" "shadowsocks-rust"
         "sing-box" "v2ray-core" "v2ray-geodata" "v2ray-plugin" "tuic-client"
         "chinadns-ng" "ipt2socks" "tcping" "trojan-plus" "simple-obfs"
-        "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview"
+        "shadowsocksr-libev" "dae" "daed" "mihomo" "geoview" "tailscale"
     )
     local small8_packages=(
         "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
