@@ -1,5 +1,5 @@
-name: Relese WRT
-run-name: Relese - ${{ inputs.model }}
+name: Release WRT
+run-name: Release - ${{ inputs.model }}
 
 on:
   workflow_dispatch:
