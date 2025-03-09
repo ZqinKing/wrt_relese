@@ -38,5 +38,9 @@ cd wrt_relese
 编译X64:  
 ./build.sh x64_immwrt  
   
+编译兆能M2:  
+./build.sh zn_m2_immwrt  
+./build.sh zn_m2_libwrt  
+  
 三方插件源自：https://github.com/kenzok8/small-package.git  
   
