@@ -414,15 +414,17 @@ update_pw_ha_chk() {
 }
 
 install_opkg_distfeeds() {
-    # 只处理aarch64
-    if ! grep -q "nss-packages" "$BUILD_DIR/feeds.conf.default"; then
-        return
-    fi
     local emortal_def_dir="$BUILD_DIR/package/emortal/default-settings"
     local distfeeds_conf="$emortal_def_dir/files/99-distfeeds.conf"
 
     if [ -d "$emortal_def_dir" ] && [ ! -f "$distfeeds_conf" ]; then
-        install -Dm755 "$BASE_PATH/patches/99-distfeeds.conf" "$distfeeds_conf"
+        cat <<'EOF' >"$distfeeds_conf"
+src/gz openwrt_base https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/base/
+src/gz openwrt_luci https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/luci/
+src/gz openwrt_packages https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/packages/
+src/gz openwrt_routing https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/routing/
+src/gz openwrt_telephony https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/telephony/
+EOF
 
         sed -i "/define Package\/default-settings\/install/a\\
 \\t\$(INSTALL_DIR) \$(1)/etc\\n\

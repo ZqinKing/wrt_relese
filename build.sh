@@ -44,6 +44,13 @@ $BASE_PATH/update.sh "$REPO_URL" "$REPO_BRANCH" "$BASE_PATH/$BUILD_DIR" "$COMMIT
 cd "$BASE_PATH/$BUILD_DIR"
 make defconfig
 
+if grep -qE "^CONFIG_TARGET_x86_64=y" "$CONFIG_FILE"; then
+    DISTFEEDS_PATH="$BASE_PATH/$BUILD_DIR/package/emortal/default-settings/files/99-distfeeds.conf"
+    if [[ -f "$DISTFEEDS_PATH" ]]; then
+        sed -i 's/aarch64_cortex-a53/x86_64/g' "$DISTFEEDS_PATH"
+    fi
+fi
+
 if [[ $Build_Mod == "debug" ]]; then
     exit 0
 fi
