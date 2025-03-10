@@ -609,12 +609,19 @@ fix_quickstart() {
 
 update_oaf_deconfig() {
     local conf_path="$BUILD_DIR/feeds/small8/open-app-filter/files/appfilter.config"
+    local uci_def="$BUILD_DIR/feeds/small8/luci-app-oaf/root/etc/uci-defaults/94_feature_3.0"
 
-    sed -i \
-        -e "s/record_enable '1'/record_enable '0'/g" \
-        -e "s/disable_hnat '1'/disable_hnat '0'/g" \
-        -e "s/auto_load_engine '1'/auto_load_engine '0'/g" \
-        "$conf_path"
+    if [ -d "${conf_path%/*}" ] && [ -f "$conf_path" ]; then
+        sed -i \
+            -e "s/record_enable '1'/record_enable '0'/g" \
+            -e "s/disable_hnat '1'/disable_hnat '0'/g" \
+            -e "s/auto_load_engine '1'/auto_load_engine '0'/g" \
+            "$conf_path"
+    fi
+
+    if [ -d "${uci_def%/*}" ] && [ -f "$uci_def" ]; then
+        sed -i '/\(disable_hnat\|auto_load_engine\)/d' "$uci_def"
+    fi
 }
 
 main() {
