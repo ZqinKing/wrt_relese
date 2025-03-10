@@ -607,6 +607,16 @@ fix_quickstart() {
     fi
 }
 
+update_oaf_deconfig() {
+    local conf_path="$BUILD_DIR/feeds/small8/open-app-filter/files/appfilter.config"
+
+    sed -i \
+        -e "s/record_enable '1'/record_enable '0'/g" \
+        -e "s/disable_hnat '1'/disable_hnat '0'/g" \
+        -e "s/auto_load_engine '1'/auto_load_engine '0'/g" \
+        "$conf_path"
+}
+
 main() {
     clone_repo
     clean_up
@@ -646,6 +656,7 @@ main() {
     optimize_smartDNS
     update_mosdns_deconfig
     fix_quickstart
+    update_oaf_deconfig
     install_feeds
     update_package "small8/sing-box"
     update_script_priority
