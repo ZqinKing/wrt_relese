@@ -596,6 +596,7 @@ update_mosdns_deconfig() {
     local mosdns_conf="$BUILD_DIR/feeds/small8/luci-app-mosdns/root/etc/config/mosdns"
     if [ -d "${mosdns_conf%/*}" ] && [ -f "$mosdns_conf" ]; then
         sed -i 's/8000/300/g' "$mosdns_conf"
+        sed -i 's/5335/5336/g' "$mosdns_conf"
     fi
 }
 
