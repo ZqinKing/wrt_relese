@@ -556,6 +556,7 @@ function add_backup_info_to_sysupgrade() {
     if [ -f "$conf_path" ]; then
         cat >"$conf_path" <<'EOF'
 /etc/AdGuardHome.yaml
+/etc/easytier
 /etc/lucky/
 EOF
     fi
