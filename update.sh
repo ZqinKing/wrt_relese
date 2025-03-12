@@ -508,30 +508,35 @@ update_dnsmasq_conf() {
 
 # 更新版本
 update_package() {
-    local dir="$BUILD_DIR/feeds/$1"
+    local dir=$(find "$BUILD_DIR/package" \( -type d -o -type l \) -name $1)
+    if [ -z $dir ]; then
+        return 0
+    fi
     local mk_path="$dir/Makefile"
-    if [ -d "${mk_path%/*}" ] && [ -f "$mk_path" ]; then
+    if [ -f "$mk_path" ]; then
         # 提取repo
-        local PKG_REPO=$(grep -oE "^PKG_SOURCE_URL.*github.com(/[-a-zA-Z0-9]{1,20}){2}" $mk_path | awk -F"/" '{print $(NF - 1) "/" $NF}')
+        local PKG_REPO=$(grep -oE "^PKG_SOURCE_URL.*github.com(/[-_a-zA-Z0-9]{1,}){2}" $mk_path | awk -F"/" '{print $(NF - 1) "/" $NF}')
         if [ -z $PKG_REPO ]; then
-            return 1
+            return 0
         fi
         local PKG_VER=$(curl -sL "https://api.github.com/repos/$PKG_REPO/releases" | jq -r "map(select(.prerelease|not)) | first | .tag_name")
-        # 删除PKG_VER开头的v
-        PKG_VER=${PKG_VER#v}
+        PKG_VER=$(echo $PKG_VER | grep -oE "[\.0-9]{1,}")
 
         local PKG_NAME=$(awk -F"=" '/PKG_NAME:=/ {print $NF}' $mk_path | grep -oE "[-_:/\$\(\)\?\.a-zA-Z0-9]{1,}")
         local PKG_SOURCE=$(awk -F"=" '/PKG_SOURCE:=/ {print $NF}' $mk_path | grep -oE "[-_:/\$\(\)\?\.a-zA-Z0-9]{1,}")
         local PKG_SOURCE_URL=$(awk -F"=" '/PKG_SOURCE_URL:=/ {print $NF}' $mk_path | grep -oE "[-_:/\$\(\)\?\.a-zA-Z0-9]{1,}")
 
-        PKG_SOURCE_URL=${PKG_SOURCE_URL/\$\(PKG_VERSION\)/$PKG_VER}
-        PKG_SOURCE=${PKG_SOURCE/\$\(PKG_VERSION\)/$PKG_VER}
-        PKG_SOURCE=${PKG_SOURCE/\$\(PKG_NAME\)/$PKG_NAME}
+        PKG_SOURCE_URL=${PKG_SOURCE_URL//\$\(PKG_NAME\)/$PKG_NAME}
+        PKG_SOURCE_URL=${PKG_SOURCE_URL//\$\(PKG_VERSION\)/$PKG_VER}
+        PKG_SOURCE=${PKG_SOURCE//\$\(PKG_NAME\)/$PKG_NAME}
+        PKG_SOURCE=${PKG_SOURCE//\$\(PKG_VERSION\)/$PKG_VER}
 
         local PKG_HASH=$(curl -sL "$PKG_SOURCE_URL""$PKG_SOURCE" | sha256sum | cut -b -64)
 
         sed -i 's/^PKG_VERSION:=.*/PKG_VERSION:='$PKG_VER'/g' $mk_path
         sed -i 's/^PKG_HASH:=.*/PKG_HASH:='$PKG_HASH'/g' $mk_path
+
+        echo "Update Package $1 to $PKG_VER $PKG_HASH"
     fi
 }
 
@@ -676,7 +681,6 @@ main() {
     fix_quickstart
     update_oaf_deconfig
     install_feeds
-    update_package "small8/sing-box"
     update_script_priority
 }
 
