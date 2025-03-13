@@ -641,12 +641,15 @@ update_oaf_deconfig() {
     if [ -d "${uci_def%/*}" ] && [ -f "$uci_def" ]; then
         sed -i '/\(disable_hnat\|auto_load_engine\)/d' "$uci_def"
 
-        # 直接创建并赋予权限，避免多次调用
-        cat > "$disable_path" <<'EOF' && chmod +x "$disable_path"
+        # 禁用脚本
+        cat >"$disable_path" <<-EOF
 #!/bin/sh
-/etc/init.d/appfilter disable
-/etc/init.d/appfilter stop
+[ "\$(uci get appfilter.global.enable 2>/dev/null)" = "0" ] && {
+    /etc/init.d/appfilter disable
+    /etc/init.d/appfilter stop
+}
 EOF
+        chmod +x "$disable_path"
     fi
 }
 
